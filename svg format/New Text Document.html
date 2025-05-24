@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>بارگذاری و نمایش BBox طرح SVG با Canvas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #canvas-container {
+            margin-top: 20px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        #dimensions {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        input[type="file"] {
+            margin-top: 20px;
+        }
+        /* مخفی کردن SVG موقت */
+        #hidden-svg-container {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>بارگذاری و نمایش BBox طرح SVG با Canvas</h1>
+    
+    <!-- ورودی برای انتخاب فایل SVG -->
+    <input type="file" id="svgFileInput" accept=".svg" />
+    
+    <!-- کانتینری برای نمایش Canvas -->
+    <div id="canvas-container">
+        <canvas id="svgCanvas"></canvas>
+    </div>
+    
+    <!-- نمایش ابعاد BBox -->
+    <div id="dimensions">
+        عرض BBox: <span id="width">-</span> پیکسل،
+        ارتفاع BBox: <span id="height">-</span> پیکسل
+    </div>
+    
+    <!-- Div مخفی برای محاسبه BBox -->
+    <div id="hidden-svg-container"></div>
+    
+    <script>
+        document.getElementById('svgFileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'image/svg+xml') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const svgContent = e.target.result;
+                    
+                    // قرار دادن محتوای SVG در عنصر مخفی
+                    const hiddenSvgContainer = document.getElementById('hidden-svg-container');
+                    hiddenSvgContainer.innerHTML = svgContent;
+                    
+                    const tempSvg = hiddenSvgContainer.querySelector('svg');
+                    if (tempSvg) {
+                        // اطمینان از رندر شدن SVG
+                        requestAnimationFrame(() => {
+                            try {
+                                // دریافت ابعاد واقعی محتوای SVG (BBox)
+                                const bbox = tempSvg.getBBox();
+                                const width = Math.ceil(bbox.width);
+                                const height = Math.ceil(bbox.height);
+                                
+                                // نمایش ابعاد BBox
+                                document.getElementById('width').textContent = width;
+                                document.getElementById('height').textContent = height;
+                                
+                                // تنظیم اندازه Canvas
+                                const canvas = document.getElementById('svgCanvas');
+                                canvas.width = width;
+                                canvas.height = height;
+                                
+                                // سریالیزه کردن SVG به Data URL
+                                const serializer = new XMLSerializer();
+                                const svgString = serializer.serializeToString(tempSvg);
+                                const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                                const url = URL.createObjectURL(svgBlob);
+                                
+                                // ایجاد یک تصویر و رسم آن روی Canvas
+                                const img = new Image();
+                                img.onload = function() {
+                                    const ctx = canvas.getContext('2d');
+                                    // پاک کردن Canvas
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                                    // رسم تصویر روی Canvas
+                                    ctx.drawImage(img, 0, 0, width, height);
+                                    // رسم چارچوب BBox
+                                    ctx.strokeStyle = 'red';
+                                    ctx.lineWidth = 2;
+                                    ctx.strokeRect(0, 0, width, height);
+                                    // آزادسازی Blob URL
+                                    URL.revokeObjectURL(url);
+                                };
+                                img.onerror = function() {
+                                    alert('خطا در بارگذاری تصویر SVG به عنوان تصویر.');
+                                    URL.revokeObjectURL(url);
+                                };
+                                img.src = url;
+                                
+                            } catch (error) {
+                                alert('خطا در محاسبه ابعاد SVG. اطمینان حاصل کنید که SVG شما دارای محتوای قابل نمایش است.');
+                                console.error(error);
+                            }
+                        });
+                    } else {
+                        alert('فایل انتخاب شده یک فایل SVG معتبر نیست.');
+                        document.getElementById('width').textContent = '-';
+                        document.getElementById('height').textContent = '-';
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                alert('لطفاً یک فایل SVG معتبر انتخاب کنید.');
+            }
+        });
+    </script>
+</body>
+</html>

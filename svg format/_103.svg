@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 252.58 252.57">
+  <g>
+    <g>
+      <rect x="91.96" y="1.17" width="5.67" height="5.67" transform="translate(24.93 68.2) rotate(-45)"/>
+      <polygon points="94.79 20.23 82.76 8.2 106.82 8.2 94.79 20.23"/>
+    </g>
+    <g>
+      <rect x="154.96" y="1.18" width="5.67" height="5.67" transform="translate(43.38 112.75) rotate(-45)"/>
+      <polygon points="157.79 20.23 169.82 8.2 145.77 8.2 157.79 20.23"/>
+    </g>
+  </g>
+  <g>
+    <rect x="144.18" y="102.72" width="5.67" height="5.67"/>
+    <polygon points="135.55 117.02 152.56 117.02 135.55 100.01 135.55 117.02"/>
+  </g>
+  <g>
+    <rect x="102.73" y="102.72" width="5.67" height="5.67"/>
+    <polygon points="117.03 117.02 117.03 100.01 100.02 117.02 117.03 117.02"/>
+  </g>
+  <g>
+    <rect x="102.73" y="144.17" width="5.67" height="5.67"/>
+    <polygon points="117.03 135.54 100.02 135.54 117.03 152.55 117.03 135.54"/>
+  </g>
+  <g>
+    <rect x="144.18" y="144.17" width="5.67" height="5.67"/>
+    <polygon points="135.55 135.54 135.55 152.55 152.56 135.54 135.55 135.54"/>
+  </g>
+  <g>
+    <g>
+      <rect x="1.17" y="154.95" width="5.67" height="5.67" transform="translate(-110.39 49.05) rotate(-45)"/>
+      <polygon points="20.24 157.78 8.21 169.81 8.21 145.75 20.24 157.78"/>
+    </g>
+    <g>
+      <rect x="1.18" y="91.94" width="5.67" height="5.67" transform="translate(-65.84 30.6) rotate(-45)"/>
+      <polygon points="20.24 94.78 8.21 82.75 8.21 106.8 20.24 94.78"/>
+    </g>
+  </g>
+  <g>
+    <g>
+      <rect x="154.96" y="245.72" width="5.67" height="5.67" transform="translate(-129.54 184.38) rotate(-45)"/>
+      <polygon points="157.79 232.33 169.82 244.36 145.77 244.36 157.79 232.33"/>
+    </g>
+    <g>
+      <rect x="91.96" y="245.72" width="5.67" height="5.67" transform="translate(-147.99 139.83) rotate(-45)"/>
+      <polygon points="94.79 232.33 82.76 244.36 106.82 244.36 94.79 232.33"/>
+    </g>
+  </g>
+  <g>
+    <g>
+      <rect x="245.74" y="91.95" width="5.67" height="5.67" transform="translate(5.78 203.53) rotate(-45)"/>
+      <polygon points="232.34 94.78 244.37 82.75 244.37 106.8 232.34 94.78"/>
+    </g>
+    <g>
+      <rect x="245.72" y="154.96" width="5.67" height="5.67" transform="translate(-38.77 221.97) rotate(-45)"/>
+      <polygon points="232.34 157.78 244.37 169.81 244.37 145.75 232.34 157.78"/>
+    </g>
+  </g>
+  <g>
+    <g>
+      <rect x="115.6" y="115.59" width="21.38" height="21.38" transform="translate(-52.3 126.29) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <circle cx="126.29" cy="126.28" r="3.9"/>
+    </g>
+    <g>
+      <rect x="104.06" y="53.04" width="44.46" height="44.46" transform="translate(-16.23 111.35) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="123.46" y="72.43" width="5.67" height="5.67"/>
+        <rect x="117.79" y="78.1" width="5.67" height="5.67"/>
+        <rect x="112.12" y="83.77" width="5.67" height="5.67"/>
+        <rect x="129.13" y="78.1" width="5.67" height="5.67"/>
+        <rect x="117.79" y="89.44" width="5.67" height="5.67"/>
+        <rect x="134.8" y="83.77" width="5.67" height="5.67"/>
+        <rect x="129.13" y="89.44" width="5.67" height="5.67"/>
+        <rect x="123.46" y="95.11" width="5.67" height="5.67"/>
+        <rect x="117.79" y="66.76" width="5.67" height="5.67"/>
+        <rect x="106.45" y="78.1" width="5.67" height="5.67"/>
+        <rect x="112.12" y="61.09" width="5.67" height="5.67"/>
+        <rect x="106.45" y="66.76" width="5.67" height="5.67"/>
+        <rect x="100.78" y="72.43" width="5.67" height="5.67"/>
+        <rect x="129.13" y="66.76" width="5.67" height="5.67"/>
+        <rect x="140.46" y="78.1" width="5.67" height="5.67"/>
+        <rect x="134.8" y="61.09" width="5.67" height="5.67"/>
+        <rect x="140.46" y="66.76" width="5.67" height="5.67"/>
+        <rect x="146.13" y="72.43" width="5.67" height="5.67"/>
+        <rect x="129.13" y="55.42" width="5.67" height="5.67"/>
+        <rect x="123.46" y="49.76" width="5.67" height="5.67"/>
+        <rect x="117.79" y="55.42" width="5.67" height="5.67"/>
+      </g>
+      <line x1="158.64" y1="74.35" x2="188.37" y2="44.63" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="147.1" y="44.45" width="21.38" height="21.38" transform="translate(7.23 127.73) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="157.79" cy="55.14" r="3.9"/>
+      </g>
+      <g>
+        <rect x="154.96" y="31.98" width="5.67" height="5.67"/>
+        <rect x="149.29" y="26.31" width="5.67" height="5.67"/>
+        <rect x="160.63" y="26.31" width="5.67" height="5.67"/>
+        <rect x="154.96" y="20.65" width="5.67" height="5.67"/>
+      </g>
+      <g>
+        <g>
+          <rect x="123.46" y="33.12" width="5.67" height="5.67"/>
+          <rect x="117.79" y="27.45" width="5.67" height="5.67"/>
+          <rect x="129.13" y="27.45" width="5.67" height="5.67"/>
+        </g>
+        <rect x="123.46" y="21.78" width="5.67" height="5.67"/>
+        <rect x="117.79" y="16.11" width="5.67" height="5.67"/>
+        <rect x="129.13" y="16.11" width="5.67" height="5.67"/>
+        <rect x="123.46" y="10.44" width="5.67" height="5.67"/>
+      </g>
+      <line x1="93.94" y1="74.35" x2="64.22" y2="44.63" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="84.11" y="44.46" width="21.38" height="21.38" transform="translate(-11.23 83.18) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="94.79" cy="55.14" r="3.9"/>
+      </g>
+      <g>
+        <rect x="91.95" y="31.99" width="5.67" height="5.67"/>
+        <rect x="97.62" y="26.32" width="5.67" height="5.67"/>
+        <rect x="86.28" y="26.32" width="5.67" height="5.67"/>
+        <rect x="91.95" y="20.64" width="5.67" height="5.67"/>
+      </g>
+      <line x1="126.86" y1="43.34" x2="149.69" y2="20.5" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <line x1="125.72" y1="43.34" x2="102.89" y2="20.5" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+    </g>
+    <g>
+      <rect x="53.05" y="104.05" width="44.46" height="44.46" transform="translate(-67.25 90.22) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="72.44" y="123.44" width="5.67" height="5.67"/>
+        <rect x="78.11" y="129.11" width="5.67" height="5.67"/>
+        <rect x="83.78" y="134.79" width="5.67" height="5.67"/>
+        <rect x="78.11" y="117.77" width="5.67" height="5.67"/>
+        <rect x="89.45" y="129.12" width="5.67" height="5.67"/>
+        <rect x="83.79" y="112.11" width="5.67" height="5.67"/>
+        <rect x="89.45" y="117.78" width="5.67" height="5.67"/>
+        <rect x="95.12" y="123.45" width="5.67" height="5.67"/>
+        <rect x="66.77" y="129.11" width="5.67" height="5.67"/>
+        <rect x="78.11" y="140.45" width="5.67" height="5.67"/>
+        <rect x="61.1" y="134.78" width="5.67" height="5.67"/>
+        <rect x="66.77" y="140.45" width="5.67" height="5.67"/>
+        <rect x="72.44" y="146.12" width="5.67" height="5.67"/>
+        <rect x="66.77" y="117.77" width="5.67" height="5.67"/>
+        <rect x="78.12" y="106.43" width="5.67" height="5.67"/>
+        <rect x="61.11" y="112.11" width="5.67" height="5.67"/>
+        <rect x="66.78" y="106.44" width="5.67" height="5.67"/>
+        <rect x="72.45" y="100.77" width="5.67" height="5.67"/>
+        <rect x="55.43" y="117.78" width="5.67" height="5.67"/>
+        <rect x="49.76" y="123.45" width="5.67" height="5.67"/>
+        <rect x="55.43" y="129.11" width="5.67" height="5.67"/>
+      </g>
+      <line x1="74.37" y1="93.93" x2="44.64" y2="64.2" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="44.46" y="84.09" width="21.38" height="21.38" transform="translate(-50.87 66.76) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="55.15" cy="94.78" r="3.9"/>
+      </g>
+      <g>
+        <rect x="31.99" y="91.94" width="5.67" height="5.67"/>
+        <rect x="26.32" y="97.61" width="5.67" height="5.67"/>
+        <rect x="26.32" y="86.28" width="5.67" height="5.67"/>
+        <rect x="20.66" y="91.95" width="5.67" height="5.67"/>
+      </g>
+      <g>
+        <g>
+          <rect x="33.13" y="123.45" width="5.67" height="5.67"/>
+          <rect x="27.46" y="129.12" width="5.67" height="5.67"/>
+          <rect x="27.46" y="117.78" width="5.67" height="5.67"/>
+        </g>
+        <rect x="21.79" y="123.45" width="5.67" height="5.67"/>
+        <rect x="16.12" y="129.12" width="5.67" height="5.67"/>
+        <rect x="16.12" y="117.78" width="5.67" height="5.67"/>
+        <rect x="10.45" y="123.45" width="5.67" height="5.67"/>
+      </g>
+      <line x1="74.37" y1="158.63" x2="44.64" y2="188.35" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="44.46" y="147.09" width="21.38" height="21.38" transform="translate(-95.41 85.21) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="55.15" cy="157.78" r="3.9"/>
+      </g>
+      <g>
+        <rect x="32" y="154.95" width="5.67" height="5.67"/>
+        <rect x="26.32" y="149.28" width="5.67" height="5.67"/>
+        <rect x="26.33" y="160.62" width="5.67" height="5.67"/>
+        <rect x="20.66" y="154.95" width="5.67" height="5.67"/>
+      </g>
+      <line x1="43.35" y1="125.71" x2="20.52" y2="102.88" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <line x1="43.35" y1="126.85" x2="20.52" y2="149.68" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+    </g>
+    <g>
+      <rect x="104.06" y="155.07" width="44.46" height="44.46" transform="translate(-88.38 141.23) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="123.45" y="174.46" width="5.67" height="5.67"/>
+        <rect x="129.12" y="168.78" width="5.67" height="5.67"/>
+        <rect x="134.79" y="163.12" width="5.67" height="5.67"/>
+        <rect x="117.78" y="168.78" width="5.67" height="5.67"/>
+        <rect x="129.12" y="157.45" width="5.67" height="5.67"/>
+        <rect x="112.12" y="163.12" width="5.67" height="5.67"/>
+        <rect x="117.78" y="157.45" width="5.67" height="5.67"/>
+        <rect x="123.45" y="151.78" width="5.67" height="5.67"/>
+        <rect x="129.12" y="180.13" width="5.67" height="5.67"/>
+        <rect x="140.47" y="168.78" width="5.67" height="5.67"/>
+        <rect x="134.79" y="185.8" width="5.67" height="5.67"/>
+        <rect x="140.47" y="180.13" width="5.67" height="5.67"/>
+        <rect x="146.14" y="174.46" width="5.67" height="5.67"/>
+        <rect x="117.78" y="180.13" width="5.67" height="5.67"/>
+        <rect x="106.45" y="168.78" width="5.67" height="5.67"/>
+        <rect x="112.12" y="185.8" width="5.67" height="5.67"/>
+        <rect x="106.45" y="180.13" width="5.67" height="5.67"/>
+        <rect x="100.78" y="174.46" width="5.67" height="5.67"/>
+        <rect x="117.78" y="191.47" width="5.67" height="5.67"/>
+        <rect x="123.45" y="197.14" width="5.67" height="5.67"/>
+        <rect x="129.12" y="191.47" width="5.67" height="5.67"/>
+      </g>
+      <line x1="93.94" y1="178.2" x2="64.22" y2="207.93" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="84.09" y="186.74" width="21.38" height="21.38" transform="translate(-111.84 124.85) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="94.79" cy="197.42" r="3.9"/>
+      </g>
+      <g>
+        <rect x="91.95" y="214.91" width="5.67" height="5.67"/>
+        <rect x="97.62" y="220.58" width="5.67" height="5.67"/>
+        <rect x="86.28" y="220.58" width="5.67" height="5.67"/>
+        <rect x="91.95" y="226.25" width="5.67" height="5.67"/>
+      </g>
+      <g>
+        <g>
+          <rect x="123.45" y="213.77" width="5.67" height="5.67"/>
+          <rect x="129.12" y="219.44" width="5.67" height="5.67"/>
+          <rect x="117.78" y="219.44" width="5.67" height="5.67"/>
+        </g>
+        <rect x="123.45" y="225.11" width="5.67" height="5.67"/>
+        <rect x="129.12" y="230.78" width="5.67" height="5.67"/>
+        <rect x="117.78" y="230.78" width="5.67" height="5.67"/>
+        <rect x="123.45" y="236.45" width="5.67" height="5.67"/>
+      </g>
+      <line x1="158.64" y1="178.2" x2="188.37" y2="207.93" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="147.09" y="186.73" width="21.38" height="21.38" transform="translate(-93.38 169.39) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="157.79" cy="197.42" r="3.9"/>
+      </g>
+      <g>
+        <rect x="154.96" y="214.9" width="5.67" height="5.67"/>
+        <rect x="149.29" y="220.57" width="5.67" height="5.67"/>
+        <rect x="160.63" y="220.57" width="5.67" height="5.67"/>
+        <rect x="154.96" y="226.24" width="5.67" height="5.67"/>
+      </g>
+      <line x1="125.72" y1="209.22" x2="102.89" y2="232.05" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <line x1="126.86" y1="209.22" x2="149.69" y2="232.05" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+    </g>
+    <g>
+      <rect x="155.08" y="104.05" width="44.46" height="44.46" transform="translate(-37.36 162.36) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="174.47" y="123.45" width="5.67" height="5.67"/>
+        <rect x="168.8" y="117.78" width="5.67" height="5.67"/>
+        <rect x="163.12" y="112.11" width="5.67" height="5.67"/>
+        <rect x="168.8" y="129.12" width="5.67" height="5.67"/>
+        <rect x="157.46" y="117.78" width="5.67" height="5.67"/>
+        <rect x="163.13" y="134.79" width="5.67" height="5.67"/>
+        <rect x="157.46" y="129.12" width="5.67" height="5.67"/>
+        <rect x="151.79" y="123.45" width="5.67" height="5.67"/>
+        <rect x="180.14" y="117.78" width="5.67" height="5.67"/>
+        <rect x="168.79" y="106.44" width="5.67" height="5.67"/>
+        <rect x="185.8" y="112.11" width="5.67" height="5.67"/>
+        <rect x="180.13" y="106.44" width="5.67" height="5.67"/>
+        <rect x="174.46" y="100.77" width="5.67" height="5.67"/>
+        <rect x="180.14" y="129.12" width="5.67" height="5.67"/>
+        <rect x="168.8" y="140.46" width="5.67" height="5.67"/>
+        <rect x="185.81" y="134.79" width="5.67" height="5.67"/>
+        <rect x="180.14" y="140.46" width="5.67" height="5.67"/>
+        <rect x="174.47" y="146.13" width="5.67" height="5.67"/>
+        <rect x="191.48" y="129.12" width="5.67" height="5.67"/>
+        <rect x="197.15" y="123.45" width="5.67" height="5.67"/>
+        <rect x="191.48" y="117.78" width="5.67" height="5.67"/>
+      </g>
+      <line x1="178.22" y1="158.63" x2="207.94" y2="188.35" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="186.74" y="147.1" width="21.38" height="21.38" transform="translate(-53.74 185.82) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="197.43" cy="157.78" r="3.9"/>
+      </g>
+      <g>
+        <rect x="214.92" y="154.95" width="5.67" height="5.67"/>
+        <rect x="220.58" y="149.28" width="5.67" height="5.67"/>
+        <rect x="220.59" y="160.62" width="5.67" height="5.67"/>
+        <rect x="226.26" y="154.95" width="5.67" height="5.67"/>
+      </g>
+      <g>
+        <g>
+          <rect x="213.79" y="123.45" width="5.67" height="5.67"/>
+          <rect x="219.46" y="117.78" width="5.67" height="5.67"/>
+          <rect x="219.45" y="129.12" width="5.67" height="5.67"/>
+        </g>
+        <rect x="225.12" y="123.45" width="5.67" height="5.67"/>
+        <rect x="230.79" y="117.78" width="5.67" height="5.67"/>
+        <rect x="230.79" y="129.12" width="5.67" height="5.67"/>
+        <rect x="236.46" y="123.45" width="5.67" height="5.67"/>
+      </g>
+      <line x1="178.22" y1="93.93" x2="207.94" y2="64.2" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <g>
+        <rect x="186.74" y="84.09" width="21.38" height="21.38" transform="translate(-9.2 167.36) rotate(-45)" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+        <circle cx="197.43" cy="94.78" r="3.9"/>
+      </g>
+      <g>
+        <rect x="214.91" y="91.94" width="5.67" height="5.67"/>
+        <rect x="220.58" y="97.61" width="5.67" height="5.67"/>
+        <rect x="220.58" y="86.27" width="5.67" height="5.67"/>
+        <rect x="226.25" y="91.94" width="5.67" height="5.67"/>
+      </g>
+      <line x1="209.23" y1="126.85" x2="232.07" y2="149.68" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+      <line x1="209.23" y1="125.71" x2="232.07" y2="102.88" style="fill: none; stroke: #000; stroke-miterlimit: 10; stroke-width: 3px;"/>
+    </g>
+  </g>
+</svg>
