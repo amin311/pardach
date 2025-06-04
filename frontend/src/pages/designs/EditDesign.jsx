@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import Select from 'react-select';
@@ -17,9 +17,9 @@ const EditDesign = () => {
     type: '',
     status: 'draft',
     is_public: false,
-    categories: [],
-    tags: [],
-    family: null,
+    category_ids: [],
+    tag_ids: [],
+    family_ids: [],
     product_image: null,
     svg_file: null
   });
@@ -63,9 +63,9 @@ const EditDesign = () => {
           type: design.type || '',
           status: design.status,
           is_public: design.is_public,
-          categories: design.categories,
-          tags: design.tags,
-          family: design.family,
+          category_ids: design.categories ? design.categories.map(cat => cat.id) : [],
+          tag_ids: design.tags ? design.tags.map(tag => tag.id) : [],
+          family_ids: design.families ? design.families.map(fam => fam.id) : [],
           product_image: null,
           svg_file: null
         });
@@ -130,10 +130,10 @@ const EditDesign = () => {
   
   // مدیریت تغییرات در سلکت‌ها
   const handleSelectChange = (selectedOptions, { name }) => {
-    if (name === 'family') {
+    if (name === 'family_ids') {
       setFormData(prev => ({
         ...prev,
-        [name]: selectedOptions ? selectedOptions.value : null
+        [name]: selectedOptions ? selectedOptions.map(option => option.value) : []
       }));
     } else {
       setFormData(prev => ({
@@ -163,18 +163,18 @@ const EditDesign = () => {
       form.append('status', formData.status);
       form.append('is_public', formData.is_public);
       
-      // اضافه کردن دسته‌بندی‌ها و تگ‌ها و خانواده
-      formData.categories.forEach(id => {
-        form.append('categories', id);
+      // اضافه کردن دسته‌بندی‌ها و تگ‌ها و خانواده‌ها با نام‌های درست
+      formData.category_ids.forEach(id => {
+        form.append('category_ids', id);
       });
       
-      formData.tags.forEach(id => {
-        form.append('tags', id);
+      formData.tag_ids.forEach(id => {
+        form.append('tag_ids', id);
       });
       
-      if (formData.family) {
-        form.append('family', formData.family);
-      }
+      formData.family_ids.forEach(id => {
+        form.append('family_ids', id);
+      });
       
       // اضافه کردن فایل‌ها در صورت تغییر
       if (formData.product_image) {
@@ -320,13 +320,13 @@ const EditDesign = () => {
                 </label>
                 <Select
                   isMulti
-                  name="categories"
+                  name="category_ids"
                   options={categories}
                   className="basic-multi-select"
                   classNamePrefix="select"
                   placeholder="دسته‌بندی‌ها را انتخاب کنید"
-                  value={formatCurrentOptions(formData.categories, categories)}
-                  onChange={(selectedOptions) => handleSelectChange(selectedOptions, { name: 'categories' })}
+                  value={formatCurrentOptions(formData.category_ids, categories)}
+                  onChange={(selectedOptions) => handleSelectChange(selectedOptions, { name: 'category_ids' })}
                 />
               </div>
               
@@ -336,13 +336,13 @@ const EditDesign = () => {
                 </label>
                 <Select
                   isMulti
-                  name="tags"
+                  name="tag_ids"
                   options={tags}
                   className="basic-multi-select"
                   classNamePrefix="select"
                   placeholder="برچسب‌ها را انتخاب کنید"
-                  value={formatCurrentOptions(formData.tags, tags)}
-                  onChange={(selectedOptions) => handleSelectChange(selectedOptions, { name: 'tags' })}
+                  value={formatCurrentOptions(formData.tag_ids, tags)}
+                  onChange={(selectedOptions) => handleSelectChange(selectedOptions, { name: 'tag_ids' })}
                 />
               </div>
               
@@ -351,14 +351,14 @@ const EditDesign = () => {
                   خانواده
                 </label>
                 <Select
-                  name="family"
+                  isMulti
+                  name="family_ids"
                   options={families}
-                  className="basic-select"
+                  className="basic-multi-select"
                   classNamePrefix="select"
-                  placeholder="خانواده را انتخاب کنید"
-                  value={families.find(f => f.value === formData.family) || null}
-                  onChange={(selectedOption) => handleSelectChange(selectedOption, { name: 'family' })}
-                  isClearable
+                  placeholder="خانواده‌ها را انتخاب کنید"
+                  value={formatCurrentOptions(formData.family_ids, families)}
+                  onChange={(selectedOptions) => handleSelectChange(selectedOptions, { name: 'family_ids' })}
                 />
               </div>
               

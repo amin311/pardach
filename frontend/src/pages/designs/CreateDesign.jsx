@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -30,12 +30,10 @@ const CreateDesign = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const headers = { Authorization: `Bearer ${localStorage.getItem('access_token')}` };
-        
         const [categoriesRes, tagsRes, familiesRes] = await Promise.all([
-          axios.get('/api/designs/categories/', { headers }),
-          axios.get('/api/designs/tags/', { headers }),
-          axios.get('/api/designs/families/', { headers })
+          axios.get('/api/designs/categories/'),
+          axios.get('/api/designs/tags/'),
+          axios.get('/api/designs/families/')
         ]);
         
         setCategories(categoriesRes.data.map(cat => ({ value: cat.id, label: cat.full_path || cat.name })));
@@ -114,7 +112,6 @@ const CreateDesign = () => {
       
       const response = await axios.post('/api/designs/designs/', form, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
           'Content-Type': 'multipart/form-data'
         }
       });

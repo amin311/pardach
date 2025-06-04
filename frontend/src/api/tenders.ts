@@ -1,4 +1,4 @@
-import axios from "@/lib/axios";
+import axios from "../lib/axios";
 import { useQuery, useMutation } from "react-query";
 
 interface TenderForm {

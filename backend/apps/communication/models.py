@@ -75,7 +75,7 @@ class Notification(BaseModel):
         ('general', _('عمومی')),
     )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', verbose_name=_("کاربر"))
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comm_notifications', verbose_name=_("کاربر"))
     business = models.ForeignKey(
         'business.Business', 
         on_delete=models.SET_NULL, 

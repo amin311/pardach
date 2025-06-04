@@ -129,9 +129,14 @@ class DesignListCreateView(APIView):
             if 'svg_file' in request.FILES:
                 request.FILES['svg_file'] = validate_file_size(request.FILES['svg_file'])
                 request.FILES['svg_file'] = validate_file_format(request.FILES['svg_file'], ['svg'])
+            
             serializer = DesignSerializer(data=request.data)
             if serializer.is_valid():
-                design = serializer.save(created_by=request.user)
+                # تنظیم خودکار designer و created_by
+                design = serializer.save(
+                    created_by=request.user,
+                    designer=request.user
+                )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:

@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
-from .models import Business, BusinessUser
-from .serializers import BusinessSerializer, BusinessUserSerializer
+from .models import Business, BusinessUser, BusinessActivity
+from .serializers import BusinessSerializer, BusinessUserSerializer, BusinessActivitySerializer
 from drf_spectacular.utils import extend_schema
 from apps.core.utils import log_error, validate_file_size, validate_file_format
 from django.db.models import Q
@@ -217,3 +217,31 @@ class BusinessUserDetailView(APIView):
         except Exception as e:
             log_error("خطا در حذف کاربر کسب‌وکار", e)
             return Response({'error': 'خطا در حذف کاربر کسب‌وکار'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class BusinessActivityListView(APIView):
+    """لیست فعالیت‌های کسب‌وکار"""
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(summary="دریافت لیست فعالیت‌های کسب‌وکار", responses={200: BusinessActivitySerializer(many=True)})
+    def get(self, request, business_id):
+        try:
+            business = Business.objects.get(id=business_id)
+            
+            # بررسی دسترسی
+            if not request.user.is_staff and business.owner != request.user and not business.users.filter(user=request.user).exists():
+                return Response({'error': 'دسترسی غیرمجاز'}, status=status.HTTP_403_FORBIDDEN)
+                
+            activities = BusinessActivity.objects.filter(business=business, is_active=True)
+            
+            # فیلتر بر اساس نوع فعالیت
+            activity_type = request.query_params.get('activity_type')
+            if activity_type:
+                activities = activities.filter(activity_type=activity_type)
+                
+            serializer = BusinessActivitySerializer(activities, many=True)
+            return Response(serializer.data)
+        except Business.DoesNotExist:
+            return Response({'error': 'کسب‌وکار یافت نشد'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            log_error("خطا در دریافت فعالیت‌های کسب‌وکار", e)
+            return Response({'error': 'خطا در دریافت اطلاعات فعالیت‌های کسب‌وکار'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

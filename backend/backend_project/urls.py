@@ -16,12 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from apps.main.views import home
 
 urlpatterns = [
     path('', home, name='home'),
     path('admin/', admin.site.urls),
+    
+    # API Authentication
     path('api/auth/', include('apps.authentication.urls')),
+    
+    # API Endpoints
     path('api/core/', include('apps.core.urls')),
     path('api/templates/', include('apps.templates_app.urls')),
     path('api/payment/', include('apps.payment.urls')),
@@ -38,5 +44,18 @@ urlpatterns = [
     path('api/craft/', include('apps.craft.urls')),
     path('api/tender/', include('apps.tender.urls')),
     path('api/set-design/', include('apps.set_design.urls')),
+    path('api/print-locations/', include('apps.print_locations.urls')),
     path('api/', include('apps.api.urls')),
 ]
+
+# اضافه کردن URL های فایل‌های استاتیک و مدیا در حالت توسعه
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    
+    # اضافه کردن API documentation
+    from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+    urlpatterns += [
+        path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+        path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    ]

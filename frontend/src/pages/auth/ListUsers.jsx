@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -20,9 +20,7 @@ const ListUsers = ({ userId, isAdmin }) => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/auth/users/', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-      });
+      const response = await axios.get('/api/auth/users/');
       setUsers(response.data);
     } catch (error) {
       toast.error('خطا در بارگذاری کاربران');
@@ -36,9 +34,7 @@ const ListUsers = ({ userId, isAdmin }) => {
   const handleDelete = async (userId) => {
     if (window.confirm('آیا از حذف کاربر مطمئن هستید؟')) {
       try {
-        await axios.delete(`/api/auth/users/${userId}/`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-        });
+        await axios.delete(`/api/auth/users/${userId}/`);
         setUsers(users.filter(user => user.id !== userId));
         toast.success('کاربر با موفقیت حذف شد');
       } catch (error) {

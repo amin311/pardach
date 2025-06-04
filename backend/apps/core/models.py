@@ -4,12 +4,9 @@ import uuid
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.contrib.auth.models import User
 from decimal import Decimal
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 class BaseModel(models.Model):
     """مدل پایه برای استفاده در همه مدل‌های دیگر"""
@@ -118,7 +115,7 @@ class Tender(models.Model):
 
     title = models.CharField(max_length=120)
     description = models.TextField(blank=True)
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tenders")
+    customer = models.ForeignKey('authentication.User', on_delete=models.CASCADE, related_name="tenders")
     deadline = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=OPEN)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -132,7 +129,7 @@ class Tender(models.Model):
 class Business(models.Model):
     """Simplified placeholder; your existing Business model likely richer."""
     name = models.CharField(max_length=120)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey('authentication.User', on_delete=models.CASCADE)
     # … other fields …
     def __str__(self):
         return self.name
@@ -163,7 +160,7 @@ class Bid(models.Model):
 class Workshop(models.Model):
     """Production workshop with daily capacity (e.g., pieces per day)."""
     name = models.CharField(max_length=120)
-    manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    manager = models.ForeignKey('authentication.User', on_delete=models.SET_NULL, null=True, blank=True)
     daily_capacity = models.PositiveIntegerField(default=0)
     used_capacity = models.PositiveIntegerField(default=0)  # auto‑calc
     is_active = models.BooleanField(default=True)
@@ -199,8 +196,9 @@ class WorkshopTask(models.Model):
         return f"Task {self.id} ({self.status})"
 
 class WorkshopReport(models.Model):
+    """Progress report for a workshop task."""
     task = models.ForeignKey(WorkshopTask, on_delete=models.CASCADE, related_name="reports")
-    reporter = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    reporter = models.ForeignKey('authentication.User', on_delete=models.SET_NULL, null=True)
     note = models.TextField(blank=True)
     progress = models.PositiveIntegerField(default=0)  # 0‑100
     created_at = models.DateTimeField(auto_now_add=True)
@@ -225,7 +223,7 @@ class Order(models.Model):
         (CANCELLED, "Cancelled"),
     ]
     tender = models.ForeignKey(Tender, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders")
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="core_orders")
+    customer = models.ForeignKey('authentication.User', on_delete=models.CASCADE, related_name="core_orders")
     total_price = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0.00"))
     status = models.CharField(max_length=12, choices=STATUS_CHOICES, default=NEW)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -277,7 +275,7 @@ class SetDesign(models.Model):
         (REJECTED, "Rejected")
     ]
     order_stage = models.ForeignKey(OrderStage, on_delete=models.CASCADE, related_name="designs")
-    designer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="setdesigns")
+    designer = models.ForeignKey('authentication.User', on_delete=models.CASCADE, related_name="setdesigns")
     design_file = models.FileField(upload_to="designs/", verbose_name=_("فایل طراحی"))
     preview = models.ImageField(upload_to="design_previews/", null=True, blank=True, verbose_name=_("پیش‌نمایش"))
     status = models.CharField(max_length=10, choices=STATUS, default=SUBMITTED, verbose_name=_("وضعیت"))

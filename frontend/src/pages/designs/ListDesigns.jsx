@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Select from 'react-select';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const ListDesigns = ({ userId, isAdmin }) => {
   const [designs, setDesigns] = useState([]);
@@ -11,6 +12,7 @@ const ListDesigns = ({ userId, isAdmin }) => {
   const [tags, setTags] = useState([]);
   const [filters, setFilters] = useState({ category: '', tag: '', search: '' });
   const [loading, setLoading] = useState(true);
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, designId: null, loading: false });
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -20,38 +22,40 @@ const ListDesigns = ({ userId, isAdmin }) => {
 
     setLoading(true);
     
-    axios.get(`/api/designs/designs/?${params.toString()}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-    })
+    axios.get(`/api/designs/designs/?${params.toString()}`)
       .then(res => setDesigns(res.data))
       .catch(() => toast.error('خطا در بارگذاری طرح‌ها'))
       .finally(() => setLoading(false));
 
-    axios.get('/api/designs/categories/', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-    })
+    axios.get('/api/designs/categories/')
       .then(res => setCategories(res.data.map(cat => ({ value: cat.id, label: cat.full_path }))))
       .catch(() => toast.error('خطا در بارگذاری دسته‌بندی‌ها'));
 
-    axios.get('/api/designs/tags/', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-    })
+    axios.get('/api/designs/tags/')
       .then(res => setTags(res.data.map(tag => ({ value: tag.id, label: tag.name }))))
       .catch(() => toast.error('خطا در بارگذاری برچسب‌ها'));
   }, [filters]);
 
-  const handleDelete = async (designId) => {
-    if (window.confirm('آیا از حذف طرح مطمئن هستید؟')) {
-      try {
-        await axios.delete(`/api/designs/designs/${designId}/`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-        });
-        setDesigns(designs.filter(design => design.id !== designId));
-        toast.success('طرح حذف شد');
-      } catch (error) {
-        toast.error('خطا در حذف طرح');
-      }
+  const handleDeleteClick = (designId) => {
+    setDeleteDialog({ open: true, designId, loading: false });
+  };
+
+  const handleDeleteConfirm = async () => {
+    setDeleteDialog(prev => ({ ...prev, loading: true }));
+    
+    try {
+      await axios.delete(`/api/designs/designs/${deleteDialog.designId}/`);
+      setDesigns(designs.filter(design => design.id !== deleteDialog.designId));
+      toast.success('طرح با موفقیت حذف شد');
+      setDeleteDialog({ open: false, designId: null, loading: false });
+    } catch (error) {
+      toast.error('خطا در حذف طرح');
+      setDeleteDialog(prev => ({ ...prev, loading: false }));
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialog({ open: false, designId: null, loading: false });
   };
 
   return (
@@ -198,35 +202,43 @@ const ListDesigns = ({ userId, isAdmin }) => {
                 </div>
                 
                 <div className="flex gap-2 mt-2">
-                  <Link 
-                    to={`/designs/${design.id}`} 
-                    className="flex-1 py-1.5 px-2 text-center text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                  <Link
+                    to={`/designs/${design.id}`}
+                    className="flex-1 py-2 px-3 text-center text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition"
                   >
                     مشاهده
                   </Link>
-                  
-                  {(design.created_by === userId || isAdmin) && (
-                    <>
-                      <Link 
-                        to={`/designs/edit/${design.id}`} 
-                        className="flex-1 py-1.5 px-2 text-center text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
-                      >
-                        ویرایش
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(design.id)}
-                        className="flex-1 py-1.5 px-2 text-center text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-                      >
-                        حذف
-                      </button>
-                    </>
-                  )}
+                  <Link
+                    to={`/designs/edit/${design.id}`}
+                    className="flex-1 py-2 px-3 text-center text-sm bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+                  >
+                    ویرایش
+                  </Link>
+                  <button
+                    onClick={() => handleDeleteClick(design.id)}
+                    className="flex-1 py-2 px-3 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
+                  >
+                    حذف
+                  </button>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
       )}
+      
+      {/* دیالوگ تأیید حذف */}
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        title="حذف طرح"
+        message="آیا از حذف این طرح مطمئن هستید؟ این عمل قابل بازگشت نیست."
+        confirmText="حذف"
+        cancelText="لغو"
+        severity="error"
+        loading={deleteDialog.loading}
+      />
     </div>
   );
 };

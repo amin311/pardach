@@ -5,6 +5,7 @@ import {
   Alert, InputAdornment, IconButton 
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import axios from '../lib/axios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,23 +27,31 @@ const Login = () => {
     setError('');
     
     try {
-      // در یک پروژه واقعی، این بخش با API ارتباط برقرار می‌کند
-      // اینجا فقط شبیه‌سازی کرده‌ایم
+      // ارسال درخواست لاگین به API
+      const response = await axios.post('/api/auth/login/', {
+        username,
+        password,
+      });
+
+      const { access, refresh, user } = response.data;
       
-      // شبیه‌سازی API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // شبیه‌سازی دریافت توکن از سرور
-      const fakeToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.fake";
-      
-      // ذخیره توکن در localStorage
-      localStorage.setItem('token', fakeToken);
+      // ذخیره توکن‌ها در localStorage
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      localStorage.setItem('user', JSON.stringify(user));
       
       // هدایت به صفحه اصلی
       navigate('/');
     } catch (err) {
-      setError('خطا در ورود به سیستم. لطفاً دوباره تلاش کنید.');
-      console.error(err);
+      console.error('Login error:', err);
+      
+      if (err.response?.status === 400) {
+        setError('نام کاربری یا رمز عبور اشتباه است');
+      } else if (err.response?.status === 500) {
+        setError('خطای سرور. لطفاً بعداً تلاش کنید');
+      } else {
+        setError('خطا در ورود به سیستم. لطفاً دوباره تلاش کنید.');
+      }
     } finally {
       setLoading(false);
     }
