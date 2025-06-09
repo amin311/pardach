@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -14,7 +14,7 @@ const DetailOrder = ({ userId, isAdmin }) => {
     const fetchOrder = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/orders/${id}/`, {
+        const response = await axiosInstance.get(`/api/orders/${id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -33,7 +33,7 @@ const DetailOrder = ({ userId, isAdmin }) => {
   const handleDelete = async () => {
     if (window.confirm('آیا از حذف این سفارش مطمئن هستید؟')) {
       try {
-        await axios.delete(`/api/orders/${id}/`, {
+        await axiosInstance.delete(`/api/orders/${id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         

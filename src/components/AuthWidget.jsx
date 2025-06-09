@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../lib/axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 
@@ -27,14 +27,14 @@ const AuthWidget = ({ setUser }) => {
       
       if (isLogin) {
         // ورود کاربر
-        response = await axios.post('/api/auth/login/', {
+        response = await axiosInstance.post('/api/auth/login/', {
           username: formData.username,
           password: formData.password
         });
         toast.success('ورود موفق');
       } else {
         // ثبت‌نام کاربر جدید
-        response = await axios.post('/api/auth/register/', formData);
+        response = await axiosInstance.post('/api/auth/register/', formData);
         toast.success('ثبت‌نام موفق');
       }
       

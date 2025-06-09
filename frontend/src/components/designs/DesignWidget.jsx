@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import Slider from "react-slick";
 import { motion } from 'framer-motion';
@@ -18,7 +18,7 @@ const DesignWidget = () => {
   const fetchDesigns = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/designs/designs/', {
+      const response = await axiosInstance.get('/api/designs/designs/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       // نمایش فقط 5 طرح آخر

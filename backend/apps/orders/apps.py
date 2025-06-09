@@ -8,9 +8,5 @@ class OrdersConfig(AppConfig):
     verbose_name = _('سفارش‌ها')
     
     def ready(self):
-        """
-        متد برای اجرای کدهای لازم در زمان بارگذاری اپلیکیشن
-        """
-        # import signals if needed
-        # from . import signals
-        pass
+        """اتصال سیگنال‌ها هنگام آماده شدن اپلیکیشن"""
+        import apps.orders.signals

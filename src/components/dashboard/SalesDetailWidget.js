@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
@@ -22,7 +22,7 @@ const SalesDetailWidget = ({ days = 30, useCombinedApi = true }) => {
     try {
       // استفاده از API یکپارچه اگر فعال باشد
       if (useCombinedApi) {
-        const response = await axios.get(`/api/dashboard/combined/?days=${days}`, {
+        const response = await axiosInstance.get(`/api/dashboard/combined/?days=${days}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -40,7 +40,7 @@ const SalesDetailWidget = ({ days = 30, useCombinedApi = true }) => {
         });
       } else {
         // استفاده از API فرعی اختصاصی فروش
-        const response = await axios.get(`/api/dashboard/sales/?days=${days}`, {
+        const response = await axiosInstance.get(`/api/dashboard/sales/?days=${days}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setSalesData(response.data);
@@ -55,7 +55,7 @@ const SalesDetailWidget = ({ days = 30, useCombinedApi = true }) => {
       
       // تلاش برای استفاده از API قبلی در صورت خطا
       try {
-        const fallbackResponse = await axios.get(`/api/dashboard/sales/?days=${days}`, {
+        const fallbackResponse = await axiosInstance.get(`/api/dashboard/sales/?days=${days}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setSalesData(fallbackResponse.data);

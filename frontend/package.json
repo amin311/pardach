@@ -33,16 +33,38 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll=false",
+    "test:watch": "react-scripts test",
     "eject": "react-scripts eject",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "cypress:run:headless": "cypress run --headless --browser chrome",
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}' --max-warnings 0",
+    "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
+    "audit": "npm audit --production",
+    "test:smoke": "cypress run --spec 'cypress/e2e/smoke_test.cy.js'",
+    "test:e2e": "cypress run --spec 'cypress/e2e/**/*.cy.js'",
+    "test:unit": "react-scripts test --watchAll=false --coverage --coverageDirectory=coverage",
+    "test:all": "npm run lint && npm run test:unit && npm run test:e2e",
+    "quality:check": "npm run lint && npm run audit && npm run test:unit",
+    "quality:full": "npm run quality:check && npm run test:e2e",
+    "report:open": "open cypress/reports/html/index.html || start cypress/reports/html/index.html",
+    "clean:reports": "rimraf cypress/reports cypress/screenshots cypress/videos coverage",
+    "pretest:e2e": "npm run clean:reports",
+    "posttest:e2e": "npm run report:open"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "no-console": "warn",
+      "no-debugger": "error",
+      "no-unused-vars": "warn",
+      "react/jsx-uses-react": "error",
+      "react/jsx-uses-vars": "error"
+    }
   },
   "browserslist": {
     "production": [
@@ -56,5 +78,27 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8000"
+  "proxy": "http://localhost:8000",
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/index.js",
+      "!src/reportWebVitals.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 50,
+        "functions": 50,
+        "lines": 50,
+        "statements": 50
+      }
+    }
+  },
+  "devDependencies": {
+    "cypress": "^14.4.1",
+    "cypress-axe": "^1.6.0",
+    "cypress-mochawesome-reporter": "^3.8.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5"
+  }
 }

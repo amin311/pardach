@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -10,7 +10,7 @@ const ListChats = ({ userId, isAdmin }) => {
 
   useEffect(() => {
     // دریافت لیست چت‌ها
-    axios.get('/api/communication/chats/', {
+    axiosInstance.get('/api/communication/chats/', {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => {
@@ -27,7 +27,7 @@ const ListChats = ({ userId, isAdmin }) => {
   // حذف چت
   const handleDeleteChat = (chatId) => {
     if (window.confirm('آیا از حذف این چت اطمینان دارید؟')) {
-      axios.delete(`/api/communication/chats/${chatId}/`, {
+      axiosInstance.delete(`/api/communication/chats/${chatId}/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       })
         .then(() => {

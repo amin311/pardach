@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -316,7 +316,7 @@ const UseTemplate = () => {
   const fetchTemplate = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/templates/templates/${id}/`);
+      const response = await axiosInstance.get(`/api/templates/templates/${id}/`);
       const templateData = response.data;
       setTemplate(templateData);
       
@@ -492,7 +492,7 @@ const UseTemplate = () => {
   const submitUserTemplate = async () => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/templates/user-templates/', {
+      const response = await axiosInstance.post('/api/templates/user-templates/', {
         ...userTemplate,
         final_price: finalPrice
       });

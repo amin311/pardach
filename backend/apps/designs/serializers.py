@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Tag, DesignCategory, Family, Design, FamilyDesignRequirement, DesignFamily
+from .models import Tag, DesignCategory, Family, Design, FamilyDesignRequirement, DesignFamily, PrintLocation
 from apps.core.utils import to_jalali
+from django.utils.translation import gettext_lazy as _
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -134,4 +135,30 @@ class DesignFamilySerializer(serializers.ModelSerializer):
         fields = ['id', 'design', 'family', 'position', 'notes', 'created_at']
 
     def get_created_at(self, obj):
-        return to_jalali(obj.created_at) 
+        return to_jalali(obj.created_at)
+
+class PrintLocationSerializer(serializers.ModelSerializer):
+    """سریالایزر برای محل‌های چاپ"""
+    location_type_display = serializers.CharField(source='get_location_type_display', read_only=True)
+    
+    class Meta:
+        model = PrintLocation
+        fields = [
+            'id', 'code', 'name', 'location_type', 'location_type_display',
+            'price_modifier', 'max_width_cm', 'max_height_cm', 
+            'is_active', 'description', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def validate_code(self, value):
+        """اعتبارسنجی کد محل چاپ"""
+        if not value.isalnum():
+            raise serializers.ValidationError(_("کد محل چاپ باید فقط شامل حروف و اعداد باشد"))
+        return value.upper()
+
+    def validate(self, attrs):
+        """اعتبارسنجی کلی"""
+        if attrs.get('max_width_cm') and attrs.get('max_height_cm'):
+            if attrs['max_width_cm'] <= 0 or attrs['max_height_cm'] <= 0:
+                raise serializers.ValidationError(_("ابعاد باید بزرگتر از صفر باشند"))
+        return attrs 

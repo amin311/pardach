@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -53,7 +53,7 @@ const ListTemplates = () => {
   const fetchTemplates = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/templates/templates/');
+      const response = await axiosInstance.get('/api/templates/templates/');
       // فقط قالب‌های منتشر شده را نمایش می‌دهیم
       const publishedTemplates = response.data.filter(
         (template) => template.status === 'PUBLISHED'

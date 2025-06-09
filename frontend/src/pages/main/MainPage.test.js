@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import MainPage from './MainPage';
 
@@ -72,7 +72,7 @@ describe('صفحه اصلی برنامه', () => {
     });
     
     // موک کردن API درخواست‌ها
-    axios.get.mockImplementation((url) => {
+    axiosInstance.get.mockImplementation((url) => {
       if (url === '/api/auth/user-info/') {
         return Promise.resolve({ data: { id: 1, is_staff: false, is_superuser: false } });
       }
@@ -108,9 +108,9 @@ describe('صفحه اصلی برنامه', () => {
     });
     
     // بررسی فراخوانی‌های API
-    expect(axios.get).toHaveBeenCalledWith('/api/auth/user-info/', expect.anything());
-    expect(axios.get).toHaveBeenCalledWith('/api/main/page-summary/', expect.anything());
-    expect(axios.get).toHaveBeenCalledWith('/api/main/settings/', expect.anything());
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/auth/user-info/', expect.anything());
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/main/page-summary/', expect.anything());
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/main/settings/', expect.anything());
   });
 
   test('باید در صورت عدم وجود توکن، به صفحه ورود هدایت شود', async () => {
@@ -126,7 +126,7 @@ describe('صفحه اصلی برنامه', () => {
   });
 
   test('باید در صورت خطا، پیام خطا نمایش داده شود', async () => {
-    axios.get.mockImplementation((url) => {
+    axiosInstance.get.mockImplementation((url) => {
       if (url === '/api/auth/user-info/') {
         return Promise.resolve({ data: { id: 1, is_staff: false } });
       }
@@ -148,7 +148,7 @@ describe('صفحه اصلی برنامه', () => {
   
   test('باید راهنما را برای کاربری که قبلاً ندیده است نمایش دهد', async () => {
     // موک کردن عدم وجود تنظیمات راهنما
-    axios.get.mockImplementation((url) => {
+    axiosInstance.get.mockImplementation((url) => {
       if (url === '/api/auth/user-info/') {
         return Promise.resolve({ data: { id: 1, is_staff: false } });
       }
@@ -173,7 +173,7 @@ describe('صفحه اصلی برنامه', () => {
   
   test('باید راهنما را برای کاربری که قبلاً دیده است نمایش ندهد', async () => {
     // موک کردن وجود تنظیمات راهنما
-    axios.get.mockImplementation((url) => {
+    axiosInstance.get.mockImplementation((url) => {
       if (url === '/api/auth/user-info/') {
         return Promise.resolve({ data: { id: 1, is_staff: false } });
       }

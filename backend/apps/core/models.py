@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 
 class BaseModel(models.Model):
-    """مدل پایه برای استفاده در همه مدل‌های دیگر"""
+    """کلاس پایه برای استفاده در همه مدل‌های دیگر"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name=_("شناسه"))
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("آخرین بروزرسانی"))
@@ -19,7 +19,7 @@ class BaseModel(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.__class__.__name__} ({self.id})"
+        return f"{self.__class__.__name__} ({str(self.id)})"
 
 class ThumbnailMixin(models.Model):
     """میکسین برای بهینه‌سازی خودکار تصاویر بندانگشتی"""

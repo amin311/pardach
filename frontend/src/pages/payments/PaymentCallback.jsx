@@ -8,7 +8,7 @@ import {
   FaCheckCircle, FaTimesCircle, FaExclamationTriangle, 
   FaArrowLeft, FaHome, FaShoppingCart, FaMoneyBill
 } from 'react-icons/fa';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 
 const PaymentCallback = () => {
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ const PaymentCallback = () => {
       }
       
       // ارسال درخواست تایید پرداخت به سرور
-      const response = await axios.post('/api/payment/verify/', {
+      const response = await axiosInstance.post('/payment/verify/', {
         authority: authority || '',
         status: status || idPayStatus || '',
         id_pay_id: idPayId || ''

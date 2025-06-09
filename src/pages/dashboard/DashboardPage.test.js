@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import DashboardPage from './DashboardPage';
 import { toast } from 'react-toastify';
 
@@ -66,11 +66,11 @@ describe('DashboardPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    axios.get.mockResolvedValue({ data: mockSummaryData });
+    axiosInstance.get.mockResolvedValue({ data: mockSummaryData });
   });
 
   test('renders loading state initially', () => {
-    axios.get.mockImplementation(() => new Promise(() => {}));
+    axiosInstance.get.mockImplementation(() => new Promise(() => {}));
     
     render(<DashboardPage />);
     
@@ -94,7 +94,7 @@ describe('DashboardPage', () => {
     expect(screen.getAllByTestId('bar-chart').length).toBeGreaterThan(0);
     
     // Default days filter is 30
-    expect(axios.get).toHaveBeenCalledWith('/api/dashboard/summary/?days=30');
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/dashboard/summary/?days=30');
   });
 
   test('changes data range when time filter changes', async () => {
@@ -109,13 +109,13 @@ describe('DashboardPage', () => {
     fireEvent.change(select, { target: { value: '7' } });
     
     await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('/api/dashboard/summary/?days=7');
+      expect(axiosInstance.get).toHaveBeenCalledWith('/api/dashboard/summary/?days=7');
     });
   });
 
   test('shows error toast when API call fails', async () => {
     const errorMessage = 'خطا در دریافت اطلاعات';
-    axios.get.mockRejectedValue({ message: errorMessage });
+    axiosInstance.get.mockRejectedValue({ message: errorMessage });
     
     render(<DashboardPage />);
     
@@ -130,7 +130,7 @@ describe('DashboardPage', () => {
       charts: {}
     };
     
-    axios.get.mockResolvedValue({ data: noChartData });
+    axiosInstance.get.mockResolvedValue({ data: noChartData });
     
     render(<DashboardPage />);
     

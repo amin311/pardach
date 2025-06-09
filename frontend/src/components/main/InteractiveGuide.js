@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 
 /**
  * کامپوننت راهنمای تعاملی برای کاربران کم‌تجربه
@@ -95,7 +95,7 @@ const InteractiveGuide = ({ userId, hasSeenGuide }) => {
     setIsVisible(false);
     
     try {
-      await axios.post('/api/main/settings/', 
+      await axiosInstance.post('/api/main/settings/', 
         {
           key: `user_${userId}_has_seen_guide`,
           value: 'true'

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -26,7 +26,7 @@ const UserSectionEdit = ({ userSection, onUpdate }) => {
   const handleDesignInputChange = async (inputId, designId) => {
     try {
       setLoading(true);
-      const response = await axios.put(`/api/templates/user-design-inputs/${inputId}/`, {
+      const response = await axiosInstance.put(`/api/templates/user-design-inputs/${inputId}/`, {
         design_id: designId
       });
       
@@ -50,7 +50,7 @@ const UserSectionEdit = ({ userSection, onUpdate }) => {
   const handleConditionChange = async (conditionId, value) => {
     try {
       setLoading(true);
-      const response = await axios.put(`/api/templates/user-conditions/${conditionId}/`, {
+      const response = await axiosInstance.put(`/api/templates/user-conditions/${conditionId}/`, {
         value: value
       });
       
@@ -327,7 +327,7 @@ const EditUserTemplate = () => {
     try {
       setLoading(true);
       // دریافت اطلاعات قالب کاربر
-      const templateResponse = await axios.get(`/api/templates/user-templates/${id}/`);
+      const templateResponse = await axiosInstance.get(`/api/templates/user-templates/${id}/`);
       const templateData = templateResponse.data;
       setUserTemplate(templateData);
       
@@ -338,7 +338,7 @@ const EditUserTemplate = () => {
       });
       
       // دریافت بخش‌های قالب کاربر
-      const sectionsResponse = await axios.get(`/api/templates/user-templates/${id}/sections/`);
+      const sectionsResponse = await axiosInstance.get(`/api/templates/user-templates/${id}/sections/`);
       setUserSections(sectionsResponse.data);
       
       setError(null);
@@ -360,7 +360,7 @@ const EditUserTemplate = () => {
   // بروزرسانی بخش کاربر
   const handleSectionUpdate = async (sectionData) => {
     try {
-      await axios.put(`/api/templates/user-sections/${sectionData.id}/`, sectionData);
+      await axiosInstance.put(`/api/templates/user-sections/${sectionData.id}/`, sectionData);
       
       // بروزرسانی لیست بخش‌ها
       setUserSections(prevSections => 
@@ -380,7 +380,7 @@ const EditUserTemplate = () => {
     
     try {
       setSaving(true);
-      const response = await axios.put(`/api/templates/user-templates/${id}/`, formData);
+      const response = await axiosInstance.put(`/api/templates/user-templates/${id}/`, formData);
       toast.success('قالب با موفقیت به‌روزرسانی شد');
       navigate(`/user-templates/${id}`);
     } catch (err) {

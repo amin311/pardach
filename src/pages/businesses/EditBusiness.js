@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ const EditBusiness = ({ userId, isAdmin }) => {
   useEffect(() => {
     const fetchBusinessData = async () => {
       try {
-        const response = await axios.get(`/api/business/businesses/${id}/`, {
+        const response = await axiosInstance.get(`/api/business/businesses/${id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -94,7 +94,7 @@ const EditBusiness = ({ userId, isAdmin }) => {
         formDataToSend.append('logo', formData.logo);
       }
       
-      await axios.put(`/api/business/businesses/${id}/`, formDataToSend, {
+      await axiosInstance.put(`/api/business/businesses/${id}/`, formDataToSend, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
           'Content-Type': 'multipart/form-data'

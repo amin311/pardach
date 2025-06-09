@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -37,7 +37,7 @@ const UserForm = ({ isAdmin, isEdit = false }) => {
   // دریافت لیست نقش‌ها
   const fetchRoles = async () => {
     try {
-      const response = await axios.get('/api/auth/roles/', {
+      const response = await axiosInstance.get('/api/auth/roles/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       setRoles(response.data);
@@ -51,7 +51,7 @@ const UserForm = ({ isAdmin, isEdit = false }) => {
   const fetchUser = async (userId) => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/auth/users/${userId}/`, {
+      const response = await axiosInstance.get(`/api/auth/users/${userId}/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -98,13 +98,13 @@ const UserForm = ({ isAdmin, isEdit = false }) => {
       
       if (isEdit) {
         // ویرایش کاربر
-        await axios.put(`/api/auth/users/${id}/`, payload, {
+        await axiosInstance.put(`/api/auth/users/${id}/`, payload, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         toast.success('کاربر با موفقیت ویرایش شد');
       } else {
         // ایجاد کاربر جدید
-        await axios.post('/api/auth/users/', payload, {
+        await axiosInstance.post('/api/auth/users/', payload, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         toast.success('کاربر با موفقیت ایجاد شد');

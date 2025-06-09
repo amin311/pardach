@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { BrowserRouter } from 'react-router-dom';
 import BusinessDetailWidget from './BusinessDetailWidget';
 import { toast } from 'react-toastify';
@@ -55,7 +55,7 @@ describe('BusinessDetailWidget', () => {
   });
 
   test('renders loading state initially', () => {
-    axios.get.mockImplementation(() => new Promise(() => {}));
+    axiosInstance.get.mockImplementation(() => new Promise(() => {}));
     
     render(<BusinessDetailWidget />, { wrapper: WrapperComponent });
     
@@ -63,7 +63,7 @@ describe('BusinessDetailWidget', () => {
   });
 
   test('renders business data when API call succeeds', async () => {
-    axios.get.mockResolvedValue({ data: mockData });
+    axiosInstance.get.mockResolvedValue({ data: mockData });
     
     render(<BusinessDetailWidget />, { wrapper: WrapperComponent });
     
@@ -75,12 +75,12 @@ describe('BusinessDetailWidget', () => {
       expect(screen.getByText('450,000 تومان')).toBeInTheDocument(); // فروش کسب‌وکار برتر
     });
     
-    expect(axios.get).toHaveBeenCalledWith('/api/dashboard/business-detail/?days=30');
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/dashboard/business-detail/?days=30');
   });
 
   test('shows error toast when API call fails', async () => {
     const errorMessage = 'خطا در دریافت اطلاعات';
-    axios.get.mockRejectedValue({ message: errorMessage });
+    axiosInstance.get.mockRejectedValue({ message: errorMessage });
     
     render(<BusinessDetailWidget />, { wrapper: WrapperComponent });
     
@@ -90,7 +90,7 @@ describe('BusinessDetailWidget', () => {
   });
 
   test('renders fallback UI when no data is available', async () => {
-    axios.get.mockResolvedValue({ data: null });
+    axiosInstance.get.mockResolvedValue({ data: null });
     
     render(<BusinessDetailWidget />, { wrapper: WrapperComponent });
     

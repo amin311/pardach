@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import Permission
 from .models import User, Role
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,9 +35,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RoleSerializer(serializers.ModelSerializer):
     """سریالایزر برای مدل نقش"""
+    permissions = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=Permission.objects.all(),
+        required=False
+    )
+    permissions_list = serializers.SerializerMethodField()
+    
     class Meta:
         model = Role
-        fields = ['name', 'description', 'permissions']
+        fields = ['id', 'name', 'description', 'permissions', 'permissions_list']
+        
+    def get_permissions_list(self, obj):
+        """برگرداندن لیست نام‌های مجوزها"""
+        return obj.get_permissions_list()
 
 class LoginSerializer(serializers.Serializer):
     """سریالایزر برای ورود کاربر با اعتبارسنجی نام کاربری و رمز عبور"""

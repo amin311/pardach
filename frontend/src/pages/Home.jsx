@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -11,7 +11,7 @@ const Home = () => {
     useEffect(() => {
         const fetchHomeData = async () => {
             try {
-                const response = await axios.get('/api/public/home');
+                const response = await axiosInstance.get('/api/public/home');
                 setHomeData(response.data);
                 setLoading(false);
             } catch (err) {

@@ -22,8 +22,15 @@ class SetDesign(BaseModel):
         related_name="assigned_setjobs",
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        limit_choices_to={"roles__contains": "set_designer"},
+        limit_choices_to={"roles__name": "set_designer"},
         verbose_name=_("ست‌بند"),
+    )
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="assigned_set_designs_active",
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        verbose_name=_("مسئول ست‌بندی")
     )
     version = models.PositiveSmallIntegerField(default=1, verbose_name=_("نسخه"))
     parent = models.ForeignKey(
@@ -37,11 +44,19 @@ class SetDesign(BaseModel):
     file = models.FileField(upload_to="sets/", verbose_name=_("فایل خروجی"))
     preview = models.ImageField(upload_to="sets/previews/", null=True, blank=True,
                                verbose_name=_("تصویر پیش‌نمایش"))
+    source_files = models.JSONField(
+        default=list, blank=True,
+        verbose_name=_("فایل‌های منبع"),
+        help_text=_("لیست فایل‌های اصلی طرح‌ها")
+    )
 
     STATUS = (
         ("waiting",  _("در انتظار ست‌بند")),
+        ("assigned", _("اختصاص داده شده")),
         ("in_progress", _("در حال ست‌بندی")),
         ("pending_approval", _("منتظر تأیید مشتری/چاپخانه")),
+        ("revision_needed", _("نیاز به اصلاح")),
+        ("approved", _("تأیید شده")),
         ("rejected", _("رد شده")),
         ("completed", _("تأیید و تکمیل")),
     )
@@ -50,6 +65,17 @@ class SetDesign(BaseModel):
     price = models.DecimalField(max_digits=12, decimal_places=0, default=0,
                                verbose_name=_("هزینه ست‌بندی (ریال)"))
     paid = models.BooleanField(default=False, verbose_name=_("پرداخت شده؟"))
+    
+    # فیلدهای جدید برای بهبود فرآیند
+    auto_notification = models.BooleanField(default=True, verbose_name=_("اطلاع‌رسانی خودکار"))
+    estimated_completion = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان تخمینی تکمیل"))
+    actual_completion = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان واقعی تکمیل"))
+    complexity_level = models.PositiveSmallIntegerField(
+        default=1, 
+        choices=[(i, str(i)) for i in range(1, 6)],
+        verbose_name=_("سطح پیچیدگی")
+    )
+    revision_notes = models.TextField(blank=True, verbose_name=_("یادداشت‌های اصلاح"))
 
     class Meta:
         ordering = ("-created_at",)
@@ -60,6 +86,80 @@ class SetDesign(BaseModel):
     def __str__(self):
         return f"Set #{self.order_item.id} v{self.version}"
 
+    def save(self, *args, **kwargs):
+        # ارسال اطلاعیه خودکار پس از تغییر وضعیت
+        old_status = None
+        if self.pk:
+            old_status = SetDesign.objects.get(pk=self.pk).status
+        
+        super().save(*args, **kwargs)
+        
+        # ارسال اطلاعیه در صورت تغییر وضعیت
+        if old_status and old_status != self.status and self.auto_notification:
+            self.send_status_notification()
+
+    def send_status_notification(self):
+        """ارسال اطلاعیه تغییر وضعیت"""
+        try:
+            from apps.notification.models import Notification
+            
+            # تعیین گیرنده بر اساس وضعیت
+            recipient = None
+            title = ""
+            message = ""
+            
+            if self.status == "assigned" and self.assigned_to:
+                recipient = self.assigned_to
+                title = "اختصاص ست‌بندی جدید"
+                message = f"یک پروژه ست‌بندی جدید به شما اختصاص داده شد. شماره سفارش: {self.order_item.order.id}"
+            
+            elif self.status == "pending_approval" and self.order_item.order.customer:
+                recipient = self.order_item.order.customer
+                title = "ست‌بندی آماده بررسی"
+                message = f"ست‌بندی سفارش شما آماده بررسی است. شماره سفارش: {self.order_item.order.id}"
+            
+            elif self.status == "completed" and self.order_item.order.customer:
+                recipient = self.order_item.order.customer
+                title = "تکمیل ست‌بندی"
+                message = f"ست‌بندی سفارش شما تکمیل شد. شماره سفارش: {self.order_item.order.id}"
+            
+            if recipient:
+                Notification.objects.create(
+                    user=recipient,
+                    title=title,
+                    message=message,
+                    notification_type='set_design_status_change',
+                    data={'set_design_id': str(self.id), 'status': self.status}
+                )
+        except ImportError:
+            # اگر مدل Notification وجود نداشت
+            pass
+
+    def assign_to_designer(self, designer):
+        """اختصاص به طراح"""
+        if self.status != 'waiting':
+            raise ValueError("فقط ست‌بندی‌های در انتظار قابل اختصاص هستند")
+        
+        self.assigned_to = designer
+        self.designer = designer  # برای سازگاری با کد قدیمی
+        self.status = 'assigned'
+        self.save(update_fields=['assigned_to', 'designer', 'status'])
+
+    def mark_completed(self):
+        """علامت‌گذاری به عنوان تکمیل شده"""
+        if self.status != 'approved':
+            raise ValueError("فقط ست‌بندی‌های تأیید شده قابل تکمیل هستند")
+        
+        self.status = 'completed'
+        self.actual_completion = timezone.now()
+        self.save(update_fields=['status', 'actual_completion'])
+        
+        # به‌روزرسانی وضعیت سفارش
+        order = self.order_item.order
+        if order.status == 'set_design':
+            order.status = 'printing_prep'
+            order.save(update_fields=['status'])
+
     # نسخه بعدی را بسازد
     def make_new_version(self, new_file, designer=None):
         return SetDesign.objects.create(
@@ -68,7 +168,9 @@ class SetDesign(BaseModel):
             parent=self,
             file=new_file,
             designer=designer or self.designer,
+            assigned_to=designer or self.assigned_to,
             status="in_progress",
+            complexity_level=self.complexity_level,
         )
 
 class SetDesignRequest(BaseModel):
@@ -90,7 +192,7 @@ class SetDesignRequest(BaseModel):
     )
     
     order = models.ForeignKey('orders.Order', on_delete=models.CASCADE, related_name='set_design_requests', verbose_name=_("سفارش"))
-    designer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_set_designs', verbose_name=_("طراح"))
+    designer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_set_design_requests', verbose_name=_("طراح"))
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name=_("وضعیت"))
     priority = models.PositiveSmallIntegerField(choices=PRIORITY_CHOICES, default=2, verbose_name=_("اولویت"))
     

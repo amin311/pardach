@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -17,19 +17,19 @@ const DetailBusiness = ({ userId, isAdmin }) => {
     const fetchBusinessData = async () => {
       try {
         // دریافت اطلاعات کسب‌وکار
-        const businessResponse = await axios.get(`/api/business/businesses/${id}/`, {
+        const businessResponse = await axiosInstance.get(`/api/business/businesses/${id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setBusiness(businessResponse.data);
 
         // دریافت کاربران کسب‌وکار
-        const usersResponse = await axios.get(`/api/business/businesses/${id}/users/`, {
+        const usersResponse = await axiosInstance.get(`/api/business/businesses/${id}/users/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setUsers(usersResponse.data);
 
         // دریافت فعالیت‌های کسب‌وکار
-        const activitiesResponse = await axios.get(`/api/business/businesses/${id}/activities/`, {
+        const activitiesResponse = await axiosInstance.get(`/api/business/businesses/${id}/activities/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setActivities(activitiesResponse.data);
@@ -51,7 +51,7 @@ const DetailBusiness = ({ userId, isAdmin }) => {
   const handleDelete = async () => {
     if (window.confirm('آیا از حذف این کسب‌وکار مطمئن هستید؟')) {
       try {
-        await axios.delete(`/api/business/businesses/${id}/`, {
+        await axiosInstance.delete(`/api/business/businesses/${id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         toast.success('کسب‌وکار با موفقیت حذف شد');

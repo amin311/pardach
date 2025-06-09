@@ -19,8 +19,11 @@ class Order(BaseModel):
         ('pending', _('در انتظار تأیید')),
         ('confirmed', _('تأیید شده')),
         ('in_progress', _('در حال انجام')),
+        ('set_design', _('در مرحله ست‌بندی')),
+        ('printing', _('در حال چاپ')),
         ('completed', _('تکمیل شده')),
         ('cancelled', _('لغو شده')),
+        ('returned', _('مرجوع شده')),
     )
 
     GARMENT_SIZE_CHOICES = (
@@ -30,7 +33,7 @@ class Order(BaseModel):
         ('L', 'L'),
         ('XL', 'XL'),
         ('XXL', 'XXL'),
-        ('XXXL', 'XXXL'),
+        ('3XL', '3XL'),
         ('custom', _('سفارشی')),
     )
     
@@ -38,18 +41,29 @@ class Order(BaseModel):
         ('cotton', _('پنبه')),
         ('polyester', _('پلی‌استر')),
         ('cotton_polyester', _('پنبه-پلی‌استر')),
+        ('lycra', _('لایکرا')),
         ('silk', _('ابریشم')),
-        ('other', _('سایر')),
+        ('linen', _('کتان')),
+    )
+
+    PRINT_TYPE_CHOICES = (
+        ('manual', _('دستی')),
+        ('digital', _('دیجیتال')),
+        ('screen', _('سیلک اسکرین')),
+        ('embroidery', _('گلدوزی')),
+        ('heat_transfer', _('انتقال حرارتی')),
     )
 
     customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name=_("مشتری"), null=True, blank=True)
     business = models.ForeignKey('business.Business', on_delete=models.CASCADE, related_name='orders', verbose_name=_("کسب‌وکار"), null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name=_("وضعیت"))
     
-    garment_size = models.CharField(max_length=20, choices=GARMENT_SIZE_CHOICES, verbose_name=_("سایز لباس"), null=True, blank=True)
+    garment_size = models.CharField(max_length=10, choices=GARMENT_SIZE_CHOICES, verbose_name=_("اندازه لباس"), null=True, blank=True)
+    print_type = models.CharField(max_length=15, choices=PRINT_TYPE_CHOICES, default='manual', verbose_name=_("نوع چاپ"), null=True, blank=True)
     custom_size_details = models.JSONField(null=True, blank=True, verbose_name=_("جزئیات سایز سفارشی"))
     fabric_type = models.CharField(max_length=20, choices=FABRIC_TYPE_CHOICES, verbose_name=_("نوع پارچه"), null=True, blank=True)
     fabric_color = models.CharField(max_length=50, verbose_name=_("رنگ پارچه"), null=True, blank=True)
+    fabric_material = models.CharField(max_length=50, verbose_name=_("جنس پارچه"), null=True, blank=True)
     fabric_weight = models.PositiveIntegerField(help_text=_("گرم بر متر مربع"), verbose_name=_("وزن پارچه"), null=True, blank=True)
     fabric_details = models.TextField(blank=True, verbose_name=_("توضیحات اضافی پارچه"))
     
@@ -67,8 +81,14 @@ class Order(BaseModel):
     def calculate_total_price(self):
         """محاسبه قیمت کل سفارش"""
         total = 0
+        for section in self.sections.all():
+            section_cost = section.calculate_cost()
+            total += section_cost
+        
+        # اضافه کردن هزینه‌های اضافی
         for item in self.items.all():
-            total += item.quantity * item.unit_price
+            total += item.quantity * item.unit_price if item.unit_price else 0
+            
         self.total_price = total
         self.save(update_fields=['total_price'])
         return total
@@ -140,3 +160,122 @@ class OrderItem(BaseModel):
         verbose_name = _("آیتم سفارش")
         verbose_name_plural = _("آیتم‌های سفارش")
         ordering = ['order', 'id']
+
+class OrderSection(BaseModel):
+    """مدل برای مدیریت بخش‌های انتخاب شده در سفارش"""
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE,
+        related_name='sections', verbose_name=_("سفارش")
+    )
+    location = models.ForeignKey(
+        'designs.PrintLocation', on_delete=models.PROTECT,
+        related_name='order_sections', verbose_name=_("محل چاپ")
+    )
+    design = models.ForeignKey(
+        'designs.Design', on_delete=models.PROTECT,
+        related_name='order_sections', verbose_name=_("طرح")
+    )
+    is_inner_print = models.BooleanField(default=False, verbose_name=_("رکب به داخل"))
+    quantity = models.PositiveIntegerField(default=1, verbose_name=_("تعداد تکرار"))
+    custom_width_cm = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True,
+        verbose_name=_("عرض سفارشی (سانتی‌متر)")
+    )
+    custom_height_cm = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True,
+        verbose_name=_("ارتفاع سفارشی (سانتی‌متر)")
+    )
+    special_instructions = models.TextField(blank=True, verbose_name=_("دستورات ویژه"))
+    
+    def calculate_cost(self):
+        """محاسبه هزینه این بخش"""
+        base_cost = self.design.price if hasattr(self.design, 'price') else 0
+        location_cost = self.location.calculate_print_cost(base_cost)
+        return location_cost * self.quantity
+
+    def __str__(self):
+        return f"{self.location.name} - {self.design.title} در سفارش {str(self.order.id)[:8]}"
+
+    class Meta:
+        verbose_name = _("بخش سفارش")
+        verbose_name_plural = _("بخش‌های سفارش")
+        unique_together = ('order', 'location', 'design')
+
+class GarmentDetails(BaseModel):
+    """مدل برای ذخیره ابعاد دقیق لباس"""
+    order = models.OneToOneField(
+        Order, on_delete=models.CASCADE,
+        related_name='garment_details', verbose_name=_("سفارش")
+    )
+    length_cm = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True,
+        verbose_name=_("طول (سانتی‌متر)")
+    )
+    width_cm = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True,
+        verbose_name=_("عرض (سانتی‌متر)")
+    )
+    sleeve_length_cm = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True,
+        verbose_name=_("طول آستین (سانتی‌متر)")
+    )
+    chest_cm = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True,
+        verbose_name=_("دور سینه (سانتی‌متر)")
+    )
+    shoulder_cm = models.DecimalField(
+        max_digits=6, decimal_places=2, null=True, blank=True,
+        verbose_name=_("عرض شانه (سانتی‌متر)")
+    )
+    notes = models.TextField(blank=True, verbose_name=_("یادداشت‌های اندازه‌گیری"))
+
+    def __str__(self):
+        return f"ابعاد سفارش {str(self.order.id)[:8]}"
+
+    class Meta:
+        verbose_name = _("جزئیات لباس")
+        verbose_name_plural = _("جزئیات لباس‌ها")
+
+class OrderStage(BaseModel):
+    """مدل برای پیگیری مراحل سفارش"""
+    STAGE_CHOICES = [
+        ('order_received', _('دریافت سفارش')),
+        ('design_approval', _('تأیید طرح')),
+        ('set_design', _('ست‌بندی')),
+        ('printing_prep', _('آماده‌سازی چاپ')),
+        ('printing', _('چاپ')),
+        ('quality_check', _('کنترل کیفیت')),
+        ('packaging', _('بسته‌بندی')),
+        ('shipping', _('ارسال')),
+        ('delivered', _('تحویل')),
+    ]
+    
+    STATUS_CHOICES = [
+        ('pending', _('در انتظار')),
+        ('in_progress', _('در جریان')),
+        ('completed', _('تکمیل شده')),
+        ('on_hold', _('متوقف')),
+        ('cancelled', _('لغو شده')),
+    ]
+
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE,
+        related_name='stages', verbose_name=_("سفارش")
+    )
+    stage_type = models.CharField(max_length=20, choices=STAGE_CHOICES, verbose_name=_("نوع مرحله"))
+    status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='pending', verbose_name=_("وضعیت"))
+    started_at = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان شروع"))
+    finished_at = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان پایان"))
+    assigned_to = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='assigned_stages', verbose_name=_("مسئول")
+    )
+    notes = models.TextField(blank=True, verbose_name=_("یادداشت‌ها"))
+
+    def __str__(self):
+        return f"{self.get_stage_type_display()} - سفارش {str(self.order.id)[:8]}"
+
+    class Meta:
+        verbose_name = _("مرحله سفارش")
+        verbose_name_plural = _("مراحل سفارش")
+        ordering = ['order', 'stage_type']

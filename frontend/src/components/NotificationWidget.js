@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -81,7 +81,7 @@ const NotificationWidget = ({ userId }) => {
   const fetchNotifications = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get('/api/notification/?is_read=false&is_archived=false', {
+      const response = await axiosInstance.get('/api/notification/?is_read=false&is_archived=false', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       setNotifications(response.data);
@@ -118,7 +118,7 @@ const NotificationWidget = ({ userId }) => {
   // علامت‌گذاری اعلان به عنوان خوانده‌شده
   const markAsRead = async (notificationId) => {
     try {
-      await axios.post(`/api/notification/${notificationId}/read/`, {}, {
+      await axiosInstance.post(`/api/notification/${notificationId}/read/`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -136,7 +136,7 @@ const NotificationWidget = ({ userId }) => {
   // علامت‌گذاری همه اعلانات به عنوان خوانده‌شده
   const markAllAsRead = async () => {
     try {
-      await axios.post('/api/notification/mark-all-read/', {}, {
+      await axiosInstance.post('/api/notification/mark-all-read/', {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       

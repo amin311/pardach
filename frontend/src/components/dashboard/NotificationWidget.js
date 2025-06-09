@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ const NotificationWidget = () => {
     const fetchNotifications = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/api/notifications/?unread=true&limit=5');
+        const response = await axiosInstance.get('/api/notifications/?unread=true&limit=5');
         setNotifications(response.data.results || []);
         setError(null);
       } catch (err) {
@@ -30,7 +30,7 @@ const NotificationWidget = () => {
 
   const handleMarkAsRead = async (id) => {
     try {
-      await axios.patch(`/api/notifications/${id}/`, { read: true });
+      await axiosInstance.patch(`/api/notifications/${id}/`, { read: true });
       setNotifications(notifications.filter(notification => notification.id !== id));
       toast.success('اعلان خوانده شد');
     } catch (err) {

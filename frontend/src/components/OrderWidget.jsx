@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Slider from 'react-slick';
@@ -15,7 +15,7 @@ const OrderWidget = ({ userId }) => {
     const fetchRecentOrders = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('/api/orders/', {
+        const response = await axiosInstance.get('/api/orders/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         

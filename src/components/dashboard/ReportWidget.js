@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ const ReportWidget = () => {
     const fetchReports = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('/api/reports/?limit=5');
+        const response = await axiosInstance.get('/api/reports/?limit=5');
         setReports(response.data.results || []);
         setError(null);
       } catch (err) {

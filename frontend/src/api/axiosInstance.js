@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 
 // تنظیمات پایه axios
-const axiosInstance = axios.create({
+const axiosInstance = axiosInstance.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
   timeout: 10000,
 });
@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refresh_token');
         if (refreshToken) {
-          const response = await axios.post('/api/auth/token/refresh/', {
+          const response = await axiosInstance.post('/api/auth/token/refresh/', {
             refresh: refreshToken,
           });
           

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -18,7 +18,7 @@ const CreateChat = ({ userId }) => {
 
   useEffect(() => {
     // دریافت لیست کاربران برای انتخاب شرکت‌کنندگان
-    axios.get('/api/auth/users/', {
+    axiosInstance.get('/api/auth/users/', {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => {
@@ -37,7 +37,7 @@ const CreateChat = ({ userId }) => {
       });
 
     // دریافت لیست کسب‌وکارها
-    axios.get('/api/business/businesses/', {
+    axiosInstance.get('/api/business/businesses/', {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => {
@@ -94,7 +94,7 @@ const CreateChat = ({ userId }) => {
     }
 
     // ارسال درخواست ایجاد چت
-    axios.post('/api/communication/chats/', dataToSend, {
+    axiosInstance.post('/api/communication/chats/', dataToSend, {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => {

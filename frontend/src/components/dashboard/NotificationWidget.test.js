@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import NotificationWidget from './NotificationWidget';
 
@@ -50,7 +50,7 @@ describe('NotificationWidget', () => {
 
   test('should render loading state initially', async () => {
     // Mock axios to return a promise that doesn't resolve immediately
-    axios.get.mockImplementationOnce(() => new Promise(() => {}));
+    axiosInstance.get.mockImplementationOnce(() => new Promise(() => {}));
 
     render(<NotificationWidget />, { wrapper: WrapperComponent });
     
@@ -59,7 +59,7 @@ describe('NotificationWidget', () => {
 
   test('should render notifications when API call succeeds', async () => {
     // Mock successful API response
-    axios.get.mockResolvedValueOnce({ data: { results: mockNotifications } });
+    axiosInstance.get.mockResolvedValueOnce({ data: { results: mockNotifications } });
 
     render(<NotificationWidget />, { wrapper: WrapperComponent });
 
@@ -72,13 +72,13 @@ describe('NotificationWidget', () => {
     });
 
     // Check if the API was called with the correct params
-    expect(axios.get).toHaveBeenCalledWith('/api/notifications/?unread=true&limit=5');
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/notifications/?unread=true&limit=5');
   });
 
   test('should show error message when API call fails', async () => {
     // Mock API error
     const errorMessage = 'خطا در بارگذاری اعلان‌ها';
-    axios.get.mockRejectedValueOnce(new Error('Network Error'));
+    axiosInstance.get.mockRejectedValueOnce(new Error('Network Error'));
 
     render(<NotificationWidget />, { wrapper: WrapperComponent });
 
@@ -91,7 +91,7 @@ describe('NotificationWidget', () => {
 
   test('should display empty state when no notifications', async () => {
     // Mock response with empty array
-    axios.get.mockResolvedValueOnce({ data: { results: [] } });
+    axiosInstance.get.mockResolvedValueOnce({ data: { results: [] } });
 
     render(<NotificationWidget />, { wrapper: WrapperComponent });
 
@@ -103,8 +103,8 @@ describe('NotificationWidget', () => {
 
   test('should mark notification as read when clicking read button', async () => {
     // Mock successful API responses
-    axios.get.mockResolvedValueOnce({ data: { results: mockNotifications } });
-    axios.patch.mockResolvedValueOnce({ data: { success: true } });
+    axiosInstance.get.mockResolvedValueOnce({ data: { results: mockNotifications } });
+    axiosInstance.patch.mockResolvedValueOnce({ data: { success: true } });
 
     render(<NotificationWidget />, { wrapper: WrapperComponent });
 
@@ -119,7 +119,7 @@ describe('NotificationWidget', () => {
 
     // Wait for the success message to appear
     await waitFor(() => {
-      expect(axios.patch).toHaveBeenCalledWith('/api/notifications/1/', { read: true });
+      expect(axiosInstance.patch).toHaveBeenCalledWith('/api/notifications/1/', { read: true });
       expect(toast.success).toHaveBeenCalledWith('اعلان خوانده شد');
     });
   });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import Select from 'react-select';
@@ -48,10 +48,10 @@ const EditDesign = () => {
       try {
         setLoading(true);
         const [designRes, categoriesRes, tagsRes, familiesRes] = await Promise.all([
-          axios.get(`/api/designs/designs/${id}/`),
-          axios.get('/api/designs/categories/'),
-          axios.get('/api/designs/tags/'),
-          axios.get('/api/designs/families/')
+          axiosInstance.get(`/api/designs/designs/${id}/`),
+          axiosInstance.get('/api/designs/categories/'),
+          axiosInstance.get('/api/designs/tags/'),
+          axiosInstance.get('/api/designs/families/')
         ]);
 
         const design = designRes.data;
@@ -186,7 +186,7 @@ const EditDesign = () => {
       }
       
       // ارسال به سرور
-      const response = await axios.patch(`/api/designs/designs/${id}/`, form, {
+      const response = await axiosInstance.patch(`/api/designs/designs/${id}/`, form, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

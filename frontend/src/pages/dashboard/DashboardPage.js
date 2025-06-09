@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { 
@@ -50,7 +50,7 @@ const DashboardPage = ({ userId, isAdmin }) => {
   useEffect(() => {
     const checkGuideStatus = async () => {
       try {
-        const response = await axios.get(`/api/main/settings/user_${userId}_dashboard_guide/`, {
+        const response = await axiosInstance.get(`/api/main/settings/user_${userId}_dashboard_guide/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -71,7 +71,7 @@ const DashboardPage = ({ userId, isAdmin }) => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/dashboard/summary/?days=${days}`, {
+        const response = await axiosInstance.get(`/api/dashboard/summary/?days=${days}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setSummary(response.data.summary);

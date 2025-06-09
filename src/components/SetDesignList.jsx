@@ -3,7 +3,7 @@ import {
   Paper, Typography, Table, TableBody, TableCell, TableContainer, 
   TableHead, TableRow, Button, Box, Chip, CircularProgress
 } from '@mui/material';
-import axios from 'axios';
+import axiosInstance from '../lib/axios';
 
 const statusColors = {
   waiting: 'warning',
@@ -25,7 +25,7 @@ const SetDesignList = () => {
   const fetchSetDesigns = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/set-design/set-design/');
+      const response = await axiosInstance.get('/api/set-design/set-design/');
       setSetDesigns(response.data);
       setError(null);
     } catch (err) {
@@ -38,7 +38,7 @@ const SetDesignList = () => {
 
   const handleApprove = async (id) => {
     try {
-      await axios.post(`/api/set-design/set-design/${id}/approve/`, {
+      await axiosInstance.post(`/api/set-design/set-design/${id}/approve/`, {
         approved: true
       });
       fetchSetDesigns(); // Refresh list
@@ -54,7 +54,7 @@ const SetDesignList = () => {
     if (!userComment) return;
     
     try {
-      await axios.post(`/api/set-design/set-design/${id}/approve/`, {
+      await axiosInstance.post(`/api/set-design/set-design/${id}/approve/`, {
         approved: false,
         comment: userComment
       });
@@ -68,7 +68,7 @@ const SetDesignList = () => {
 
   const handlePay = async (id, price) => {
     try {
-      await axios.post(`/api/set-design/set-design/${id}/pay/`, {
+      await axiosInstance.post(`/api/set-design/set-design/${id}/pay/`, {
         payment_method: 'internal',
         amount: price
       });

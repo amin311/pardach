@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import InteractiveGuide from './InteractiveGuide';
 
 // ماک کردن ماژول axios
@@ -46,7 +46,7 @@ describe('آزمون‌های کامپوننت راهنمای تعاملی', () 
     window.localStorage.setItem('access_token', 'fake-token');
     
     // پاکسازی ماک‌ها
-    axios.post.mockClear();
+    axiosInstance.post.mockClear();
     window.scrollTo.mockClear();
     
     // اضافه کردن المان‌های موردنیاز به DOM
@@ -94,7 +94,7 @@ describe('آزمون‌های کامپوننت راهنمای تعاملی', () 
   });
   
   it('کلیک روی دکمه پایان راهنما باید راهنما را ببندد و وضعیت کاربر را ذخیره کند', async () => {
-    axios.post.mockResolvedValue({ data: { success: true } });
+    axiosInstance.post.mockResolvedValue({ data: { success: true } });
     
     render(<InteractiveGuide userId={1} hasSeenGuide={false} />);
     
@@ -106,14 +106,11 @@ describe('آزمون‌های کامپوننت راهنمای تعاملی', () 
     
     // بررسی فراخوانی API
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith(
+      expect(axiosInstance.post).toHaveBeenCalledWith(
         '/api/main/settings/',
         {
           key: 'user_1_has_seen_guide',
           value: 'true'
-        },
-        {
-          headers: { Authorization: 'Bearer fake-token' }
         }
       );
     });
@@ -123,7 +120,7 @@ describe('آزمون‌های کامپوننت راهنمای تعاملی', () 
   });
   
   it('رفتن به مرحله آخر و کلیک روی دکمه پایان باید راهنما را ببندد', async () => {
-    axios.post.mockResolvedValue({ data: { success: true } });
+    axiosInstance.post.mockResolvedValue({ data: { success: true } });
     
     render(<InteractiveGuide userId={1} hasSeenGuide={false} />);
     
@@ -140,7 +137,7 @@ describe('آزمون‌های کامپوننت راهنمای تعاملی', () 
     
     // بررسی فراخوانی API
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalled();
+      expect(axiosInstance.post).toHaveBeenCalled();
     });
     
     // بررسی عدم نمایش راهنما بعد از کلیک

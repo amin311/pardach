@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -27,13 +27,13 @@ const EditOrder = ({ userId, isAdmin }) => {
         setInitialLoading(true);
         
         // دریافت اطلاعات سفارش
-        const orderResponse = await axios.get(`/api/orders/${id}/`, {
+        const orderResponse = await axiosInstance.get(`/api/orders/${id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
         // دریافت لیست طرح‌ها
         setLoadingDesigns(true);
-        const designsResponse = await axios.get('/api/designs/', {
+        const designsResponse = await axiosInstance.get('/api/designs/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -46,7 +46,7 @@ const EditOrder = ({ userId, isAdmin }) => {
         
         // دریافت لیست قالب‌های کاربر
         setLoadingTemplates(true);
-        const templatesResponse = await axios.get('/api/templates/user-templates/', {
+        const templatesResponse = await axiosInstance.get('/api/templates/user-templates/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -136,7 +136,7 @@ const EditOrder = ({ userId, isAdmin }) => {
       setLoading(true);
       
       // بروزرسانی اطلاعات سفارش
-      await axios.put(`/api/orders/${id}/`, {
+      await axiosInstance.put(`/api/orders/${id}/`, {
         status: formData.status,
         notes: formData.notes
       }, {
@@ -144,7 +144,7 @@ const EditOrder = ({ userId, isAdmin }) => {
       });
       
       // دریافت آیتم‌های فعلی سفارش
-      const currentItemsResponse = await axios.get(`/api/orders/${id}/items/`, {
+      const currentItemsResponse = await axiosInstance.get(`/api/orders/${id}/items/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -156,7 +156,7 @@ const EditOrder = ({ userId, isAdmin }) => {
         if ((item.design_id || item.user_template_id) && item.quantity > 0) {
           if (item.id && currentItemIds.has(item.id)) {
             // بروزرسانی آیتم موجود
-            await axios.put(`/api/orders/items/${item.id}/`, {
+            await axiosInstance.put(`/api/orders/items/${item.id}/`, {
               design_id: item.design_id || null,
               user_template_id: item.user_template_id || null,
               quantity: item.quantity
@@ -168,7 +168,7 @@ const EditOrder = ({ userId, isAdmin }) => {
             currentItemIds.delete(item.id);
           } else {
             // ایجاد آیتم جدید
-            await axios.post(`/api/orders/${id}/items/`, {
+            await axiosInstance.post(`/api/orders/${id}/items/`, {
               design_id: item.design_id || null,
               user_template_id: item.user_template_id || null,
               quantity: item.quantity
@@ -181,7 +181,7 @@ const EditOrder = ({ userId, isAdmin }) => {
       
       // حذف آیتم‌های باقیمانده که در فرم جدید وجود ندارند
       for (const itemId of currentItemIds) {
-        await axios.delete(`/api/orders/items/${itemId}/`, {
+        await axiosInstance.delete(`/api/orders/items/${itemId}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
       }

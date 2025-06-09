@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -17,7 +17,7 @@ const DetailDesign = ({ userId, isAdmin }) => {
   const fetchDesign = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/designs/designs/${id}/`, {
+      const response = await axiosInstance.get(`/api/designs/designs/${id}/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       setDesign(response.data);
@@ -32,7 +32,7 @@ const DetailDesign = ({ userId, isAdmin }) => {
   const handleDelete = async () => {
     if (window.confirm('آیا از حذف این طرح اطمینان دارید؟')) {
       try {
-        await axios.delete(`/api/designs/designs/${id}/`, {
+        await axiosInstance.delete(`/api/designs/designs/${id}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         toast.success('طرح با موفقیت حذف شد');
@@ -48,7 +48,7 @@ const DetailDesign = ({ userId, isAdmin }) => {
     try {
       if (design.svg_file) {
         // افزایش شمارنده دانلود
-        await axios.put(`/api/designs/designs/${id}/`, 
+        await axiosInstance.put(`/api/designs/designs/${id}/`, 
           { download_count: design.download_count + 1 },
           { headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` } }
         );

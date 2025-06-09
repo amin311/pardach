@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -129,7 +129,7 @@ const UserTemplates = () => {
   const fetchUserTemplates = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/templates/user-templates/');
+      const response = await axiosInstance.get('/api/templates/user-templates/');
       setUserTemplates(response.data);
       setError(null);
     } catch (err) {
@@ -148,7 +148,7 @@ const UserTemplates = () => {
     }
     
     try {
-      await axios.delete(`/api/templates/user-templates/${userTemplateId}/`);
+      await axiosInstance.delete(`/api/templates/user-templates/${userTemplateId}/`);
       toast.success('قالب با موفقیت حذف شد');
       setUserTemplates(userTemplates.filter(ut => ut.id !== userTemplateId));
     } catch (err) {

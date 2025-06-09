@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.core.models import BaseModel
@@ -84,10 +84,19 @@ class Role(models.Model):
     """مدل نقش‌ها برای مدیریت دسترسی‌ها"""
     name = models.CharField(max_length=100, unique=True, verbose_name=_("نام نقش"))
     description = models.TextField(blank=True, verbose_name=_("توضیحات"))
-    permissions = models.JSONField(default=list, blank=True, verbose_name=_("مجوزها"))
+    permissions = models.ManyToManyField(
+        Permission,
+        blank=True,
+        verbose_name=_("مجوزها"),
+        help_text=_("مجوزهای اختصاص‌یافته به این نقش")
+    )
 
     def __str__(self):
         return self.name
+
+    def get_permissions_list(self):
+        """برگرداندن لیست نام مجوزها"""
+        return list(self.permissions.values_list('codename', flat=True))
 
     class Meta:
         verbose_name = _("نقش")

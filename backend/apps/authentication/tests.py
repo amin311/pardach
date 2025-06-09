@@ -1,6 +1,7 @@
 from django.test import TestCase
 import pytest
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from rest_framework.test import APIClient
 from .models import User, Role
 from apps.core.utils import to_jalali
@@ -115,20 +116,37 @@ def test_role_operations(client):
     admin_client = APIClient()
     admin_client.force_authenticate(user=admin)
     
+    # ایجاد چند permission برای تست
+    perm1 = Permission.objects.get_or_create(
+        codename='view_designs',
+        defaults={'name': 'Can view designs', 'content_type_id': 1}
+    )[0]
+    perm2 = Permission.objects.get_or_create(
+        codename='create_orders', 
+        defaults={'name': 'Can create orders', 'content_type_id': 1}
+    )[0]
+    
     # تست ایجاد نقش
     role_data = {
         'name': 'business',
         'description': 'کاربر کسب و کار',
-        'permissions': ['view_designs', 'create_orders']
+        'permissions': [perm1.id, perm2.id]
     }
     response = admin_client.post('/api/auth/roles/', role_data)
     assert response.status_code == 201
+    
+    # بررسی اینکه permissions به درستی اختصاص یافته
+    role = Role.objects.get(name='business')
+    assert role.permissions.count() == 2
+    assert perm1 in role.permissions.all()
+    assert perm2 in role.permissions.all()
     
     # تست دریافت لیست نقش‌ها
     response = admin_client.get('/api/auth/roles/')
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0]['name'] == 'business'
+    assert 'permissions_list' in response.data[0]
     
     # تست تغییر نقش کاربر
     admin_client.post('/api/auth/set-role/', {'role_name': 'business'})

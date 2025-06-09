@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 
@@ -16,7 +16,7 @@ const DashboardWidget = ({ userId, isAdmin }) => {
   const fetchSummaryData = async () => {
     try {
       // استفاده از API یکپارچه جدید برای افزایش کارایی
-      const response = await axios.get('/api/dashboard/combined/', {
+      const response = await axiosInstance.get('/api/dashboard/combined/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -31,7 +31,7 @@ const DashboardWidget = ({ userId, isAdmin }) => {
 
       // در صورت خطا، تلاش برای استفاده از API قبلی
       try {
-        const fallbackResponse = await axios.get('/api/dashboard/summary/', {
+        const fallbackResponse = await axiosInstance.get('/api/dashboard/summary/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setSummaryData(fallbackResponse.data.summary);

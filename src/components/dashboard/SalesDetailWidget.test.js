@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import SalesDetailWidget from './SalesDetailWidget';
 
@@ -46,7 +46,7 @@ describe('SalesDetailWidget', () => {
 
   test('should render loading state initially', async () => {
     // Mock axios to return a promise that doesn't resolve immediately
-    axios.get.mockImplementationOnce(() => new Promise(() => {}));
+    axiosInstance.get.mockImplementationOnce(() => new Promise(() => {}));
 
     render(<SalesDetailWidget days={30} />, { wrapper: WrapperComponent });
     
@@ -55,7 +55,7 @@ describe('SalesDetailWidget', () => {
 
   test('should render sales data when API call succeeds', async () => {
     // Mock successful API response
-    axios.get.mockResolvedValueOnce({ data: mockSalesData });
+    axiosInstance.get.mockResolvedValueOnce({ data: mockSalesData });
 
     render(<SalesDetailWidget days={30} />, { wrapper: WrapperComponent });
 
@@ -70,13 +70,13 @@ describe('SalesDetailWidget', () => {
     });
 
     // Check if the API was called with the correct params
-    expect(axios.get).toHaveBeenCalledWith('/api/dashboard/sales-detail/?days=30');
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/dashboard/sales-detail/?days=30');
   });
 
   test('should show error toast when API call fails', async () => {
     // Mock API error
     const errorMessage = 'خطا در بارگذاری اطلاعات فروش';
-    axios.get.mockRejectedValueOnce(new Error('Network Error'));
+    axiosInstance.get.mockRejectedValueOnce(new Error('Network Error'));
 
     render(<SalesDetailWidget days={30} />, { wrapper: WrapperComponent });
 
@@ -89,7 +89,7 @@ describe('SalesDetailWidget', () => {
 
   test('should render fallback UI when no data available', async () => {
     // Mock response with null data
-    axios.get.mockResolvedValueOnce({ data: null });
+    axiosInstance.get.mockResolvedValueOnce({ data: null });
 
     render(<SalesDetailWidget days={30} />, { wrapper: WrapperComponent });
 
@@ -101,20 +101,20 @@ describe('SalesDetailWidget', () => {
 
   test('should update data when days prop changes', async () => {
     // First render with 30 days
-    axios.get.mockResolvedValueOnce({ data: mockSalesData });
+    axiosInstance.get.mockResolvedValueOnce({ data: mockSalesData });
     const { rerender } = render(<SalesDetailWidget days={30} />, { wrapper: WrapperComponent });
     
     await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('/api/dashboard/sales-detail/?days=30');
+      expect(axiosInstance.get).toHaveBeenCalledWith('/api/dashboard/sales-detail/?days=30');
     });
     
     // Update to 90 days and mock new response
-    axios.get.mockResolvedValueOnce({ data: { ...mockSalesData, total_orders: 120 } });
+    axiosInstance.get.mockResolvedValueOnce({ data: { ...mockSalesData, total_orders: 120 } });
     
     rerender(<WrapperComponent><SalesDetailWidget days={90} /></WrapperComponent>);
     
     await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith('/api/dashboard/sales-detail/?days=90');
+      expect(axiosInstance.get).toHaveBeenCalledWith('/api/dashboard/sales-detail/?days=90');
     });
   });
 }); 

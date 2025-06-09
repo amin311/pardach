@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -15,7 +15,7 @@ const ListBusinesses = ({ userId, isAdmin }) => {
         const params = new URLSearchParams();
         if (statusFilter) params.append('status', statusFilter);
         
-        const response = await axios.get(`/api/business/businesses/?${params.toString()}`, {
+        const response = await axiosInstance.get(`/api/business/businesses/?${params.toString()}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setBusinesses(response.data);
@@ -32,7 +32,7 @@ const ListBusinesses = ({ userId, isAdmin }) => {
   const handleDelete = async (businessId) => {
     if (window.confirm('آیا از حذف این کسب‌وکار مطمئن هستید؟')) {
       try {
-        await axios.delete(`/api/business/businesses/${businessId}/`, {
+        await axiosInstance.delete(`/api/business/businesses/${businessId}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setBusinesses(businesses.filter(business => business.id !== businessId));

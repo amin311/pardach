@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -26,7 +26,7 @@ const CreateOrder = ({ userId, isAdmin }) => {
         setLoadingTemplates(true);
         
         // طرح‌ها را دریافت می‌کنیم
-        const designsResponse = await axios.get('/api/designs/', {
+        const designsResponse = await axiosInstance.get('/api/designs/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -39,7 +39,7 @@ const CreateOrder = ({ userId, isAdmin }) => {
         setLoadingDesigns(false);
         
         // قالب‌های کاربر را دریافت می‌کنیم
-        const templatesResponse = await axios.get('/api/templates/user-templates/', {
+        const templatesResponse = await axiosInstance.get('/api/templates/user-templates/', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -115,7 +115,7 @@ const CreateOrder = ({ userId, isAdmin }) => {
       setLoading(true);
       
       // ایجاد سفارش
-      const orderResponse = await axios.post('/api/orders/', {
+      const orderResponse = await axiosInstance.post('/api/orders/', {
         status: formData.status,
         notes: formData.notes
       }, {
@@ -127,7 +127,7 @@ const CreateOrder = ({ userId, isAdmin }) => {
       // افزودن آیتم‌ها به سفارش
       for (const item of formData.items) {
         if ((item.design_id || item.user_template_id) && item.quantity > 0) {
-          await axios.post(`/api/orders/${orderId}/items/`, {
+          await axiosInstance.post(`/api/orders/${orderId}/items/`, {
             design_id: item.design_id || null,
             user_template_id: item.user_template_id || null,
             quantity: item.quantity

@@ -11,7 +11,7 @@ import {
   FaBan, FaUser, FaShoppingCart, FaCalendarAlt, FaInfoCircle,
   FaExchangeAlt, FaArrowLeft, FaHistory, FaGlobe
 } from 'react-icons/fa';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { useAuth } from '../../contexts/AuthContext';
 
 // تبدیل وضعیت پرداخت به رنگ و آیکون
@@ -50,11 +50,11 @@ const DetailPayment = () => {
       setLoading(true);
       
       // دریافت اطلاعات پرداخت
-      const paymentResponse = await axios.get(`/api/payment/payments/${id}/`);
+      const paymentResponse = await axiosInstance.get(`/api/payment/payments/${id}/`);
       setPayment(paymentResponse.data);
       
       // دریافت تراکنش‌های مرتبط
-      const transactionsResponse = await axios.get(`/api/payment/payments/${id}/transactions/`);
+      const transactionsResponse = await axiosInstance.get(`/api/payment/payments/${id}/transactions/`);
       setTransactions(transactionsResponse.data);
       
       setError(null);

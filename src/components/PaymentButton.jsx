@@ -24,7 +24,7 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { FaCreditCard, FaExternalLinkAlt, FaCheckCircle } from 'react-icons/fa';
-import axios from 'axios';
+import axiosInstance from '../lib/axios';
 
 const PaymentButton = ({ 
   orderId, 
@@ -59,7 +59,7 @@ const PaymentButton = ({
       const callbackUrl = `${window.location.origin}/payment/callback`;
       
       // درخواست پرداخت
-      const response = await axios.post('/api/payment/request/', {
+      const response = await axiosInstance.post('/api/payment/request/', {
         order_id: orderId,
         gateway: gateway,
         callback_url: callbackUrl,

@@ -3,14 +3,17 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
-from .models import Tag, DesignCategory, Family, Design, FamilyDesignRequirement, DesignFamily
+from .models import Tag, DesignCategory, Family, Design, FamilyDesignRequirement, DesignFamily, PrintLocation
 from .serializers import (
     TagSerializer, DesignCategorySerializer, FamilySerializer,
-    DesignSerializer, FamilyDesignRequirementSerializer, DesignFamilySerializer
+    DesignSerializer, FamilyDesignRequirementSerializer, DesignFamilySerializer,
+    PrintLocationSerializer
 )
 from drf_spectacular.utils import extend_schema
 from apps.core.utils import log_error, validate_file_size, validate_file_format
 from django.db.models import Q
+from rest_framework import viewsets
+from rest_framework.decorators import action
 
 # Create your views here.
 
@@ -249,3 +252,61 @@ class BatchUploadView(APIView):
         except Exception as e:
             log_error("Error in batch upload", e)
             return Response({'error': 'خطا در آپلود دسته‌ای'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PrintLocationViewSet(viewsets.ModelViewSet):
+    """ViewSet برای مدیریت محل‌های چاپ روی لباس"""
+    queryset = PrintLocation.objects.filter(is_active=True)
+    serializer_class = PrintLocationSerializer
+    permission_classes = [IsAuthenticated]
+    filterset_fields = ['location_type', 'is_active']
+    search_fields = ['name', 'code']
+    ordering_fields = ['name', 'location_type', 'price_modifier']
+    ordering = ['location_type', 'name']
+
+    def get_queryset(self):
+        """فیلتر محل‌های چاپ بر اساس دسترسی کاربر"""
+        queryset = super().get_queryset()
+        
+        # نمایش همه محل‌ها برای staff
+        if self.request.user.is_staff:
+            return PrintLocation.objects.all()
+        
+        # نمایش فقط محل‌های فعال برای سایر کاربران
+        return queryset
+
+    @action(detail=False, methods=['get'])
+    def by_garment_type(self, request):
+        """دریافت محل‌های چاپ بر اساس نوع لباس"""
+        garment_type = request.query_params.get('type', '')
+        
+        # منطق فیلتر بر اساس نوع لباس
+        if garment_type == 'tshirt':
+            locations = self.get_queryset().filter(
+                location_type__in=['front', 'back', 'sleeve_left', 'sleeve_right']
+            )
+        elif garment_type == 'hoodie':
+            locations = self.get_queryset().filter(
+                location_type__in=['front', 'back', 'sleeve_left', 'sleeve_right', 'pocket']
+            )
+        else:
+            locations = self.get_queryset()
+        
+        serializer = self.get_serializer(locations, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['get'])
+    def cost_calculator(self, request, pk=None):
+        """محاسبه هزینه چاپ برای محل مشخص"""
+        location = self.get_object()
+        base_price = float(request.query_params.get('base_price', 0))
+        complexity = int(request.query_params.get('complexity', 1))
+        
+        calculated_cost = location.calculate_print_cost(base_price, complexity)
+        
+        return Response({
+            'location': location.name,
+            'base_price': base_price,
+            'complexity': complexity,
+            'price_modifier': location.price_modifier,
+            'calculated_cost': calculated_cost
+        })

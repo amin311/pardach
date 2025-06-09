@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { 
@@ -52,7 +52,7 @@ const ReportDetail = () => {
   const fetchReport = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/reports/${reportId}/`);
+      const response = await axiosInstance.get(`/api/reports/${reportId}/`);
       setReport(response.data);
     } catch (error) {
       console.error('Error fetching report:', error);
@@ -70,7 +70,7 @@ const ReportDetail = () => {
     }
     
     try {
-      await axios.delete(`/api/reports/${reportId}/`);
+      await axiosInstance.delete(`/api/reports/${reportId}/`);
       toast.success('گزارش با موفقیت حذف شد');
       navigate('/reports');
     } catch (error) {

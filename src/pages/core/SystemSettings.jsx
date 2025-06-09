@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 
 const SystemSettings = ({ isAdmin }) => {
@@ -19,7 +19,7 @@ const SystemSettings = ({ isAdmin }) => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/core/settings/', {
+      const response = await axiosInstance.get('/api/core/settings/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setSettings(response.data);
@@ -49,7 +49,7 @@ const SystemSettings = ({ isAdmin }) => {
         // اگر JSON نبود، همان مقدار رشته‌ای استفاده می‌شود
       }
 
-      const response = await axios.post('/api/core/settings/', 
+      const response = await axiosInstance.post('/api/core/settings/', 
         { ...newSetting, value: parsedValue },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
@@ -75,7 +75,7 @@ const SystemSettings = ({ isAdmin }) => {
         }
       }
 
-      await axios.put(`/api/core/settings/${key}/`, 
+      await axiosInstance.put(`/api/core/settings/${key}/`, 
         { value: parsedValue },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );

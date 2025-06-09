@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -20,20 +20,20 @@ const ListDesigns = ({ userId, isAdmin }) => {
 
     setLoading(true);
     
-    axios.get(`/api/designs/designs/?${params.toString()}`, {
+    axiosInstance.get(`/api/designs/designs/?${params.toString()}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => setDesigns(res.data))
       .catch(() => toast.error('خطا در بارگذاری طرح‌ها'))
       .finally(() => setLoading(false));
 
-    axios.get('/api/designs/categories/', {
+    axiosInstance.get('/api/designs/categories/', {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => setCategories(res.data.map(cat => ({ value: cat.id, label: cat.full_path }))))
       .catch(() => toast.error('خطا در بارگذاری دسته‌بندی‌ها'));
 
-    axios.get('/api/designs/tags/', {
+    axiosInstance.get('/api/designs/tags/', {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => setTags(res.data.map(tag => ({ value: tag.id, label: tag.name }))))
@@ -43,7 +43,7 @@ const ListDesigns = ({ userId, isAdmin }) => {
   const handleDelete = async (designId) => {
     if (window.confirm('آیا از حذف طرح مطمئن هستید؟')) {
       try {
-        await axios.delete(`/api/designs/designs/${designId}/`, {
+        await axiosInstance.delete(`/api/designs/designs/${designId}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setDesigns(designs.filter(design => design.id !== designId));

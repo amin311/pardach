@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import axiosInstance from '../lib/axios';
 import { toast } from 'react-toastify';
 
 // کامپوننت‌های داشبورد
@@ -25,7 +25,7 @@ const CombinedDashboardComponent = ({ userId, isAdmin = false }) => {
 
   const fetchCombinedData = async () => {
     try {
-      const response = await axios.get('/api/dashboard/combined/', {
+      const response = await axiosInstance.get('/api/dashboard/combined/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       

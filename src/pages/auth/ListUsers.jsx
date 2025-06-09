@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -20,7 +20,7 @@ const ListUsers = ({ userId, isAdmin }) => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/auth/users/', {
+      const response = await axiosInstance.get('/api/auth/users/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       setUsers(response.data);
@@ -36,7 +36,7 @@ const ListUsers = ({ userId, isAdmin }) => {
   const handleDelete = async (userId) => {
     if (window.confirm('آیا از حذف کاربر مطمئن هستید؟')) {
       try {
-        await axios.delete(`/api/auth/users/${userId}/`, {
+        await axiosInstance.delete(`/api/auth/users/${userId}/`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setUsers(users.filter(user => user.id !== userId));

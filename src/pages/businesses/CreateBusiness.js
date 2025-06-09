@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -53,7 +53,7 @@ const CreateBusiness = ({ userId }) => {
         formDataToSend.append('logo', formData.logo);
       }
 
-      await axios.post('/api/business/businesses/', formDataToSend, {
+      await axiosInstance.post('/api/business/businesses/', formDataToSend, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
           'Content-Type': 'multipart/form-data'

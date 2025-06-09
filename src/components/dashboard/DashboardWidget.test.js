@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import DashboardWidget from './DashboardWidget';
 import { toast } from 'react-toastify';
 
@@ -28,7 +28,7 @@ describe('DashboardWidget', () => {
   });
 
   test('renders loading state initially', () => {
-    axios.get.mockImplementation(() => new Promise(() => {}));
+    axiosInstance.get.mockImplementation(() => new Promise(() => {}));
     
     render(<DashboardWidget />);
     
@@ -36,7 +36,7 @@ describe('DashboardWidget', () => {
   });
 
   test('renders dashboard data when API call succeeds', async () => {
-    axios.get.mockResolvedValue({ data: mockData });
+    axiosInstance.get.mockResolvedValue({ data: mockData });
     
     render(<DashboardWidget />);
     
@@ -48,12 +48,12 @@ describe('DashboardWidget', () => {
       expect(screen.getByText('2')).toBeInTheDocument(); // گزارش‌ها
     });
     
-    expect(axios.get).toHaveBeenCalledWith('/api/dashboard/summary/?days=7');
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/dashboard/summary/?days=7');
   });
 
   test('shows error toast when API call fails', async () => {
     const errorMessage = 'خطا در دریافت اطلاعات';
-    axios.get.mockRejectedValue({ message: errorMessage });
+    axiosInstance.get.mockRejectedValue({ message: errorMessage });
     
     render(<DashboardWidget />);
     
@@ -63,7 +63,7 @@ describe('DashboardWidget', () => {
   });
 
   test('renders fallback UI when no data is available', async () => {
-    axios.get.mockResolvedValue({ data: {} });
+    axiosInstance.get.mockResolvedValue({ data: {} });
     
     render(<DashboardWidget />);
     

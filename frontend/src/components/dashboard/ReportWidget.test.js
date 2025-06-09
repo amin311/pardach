@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import ReportWidget from './ReportWidget';
 
@@ -55,19 +55,19 @@ describe('ReportWidget Component', () => {
 
   it('should render loading state initially', async () => {
     // Arrange
-    axios.get.mockImplementation(() => new Promise(() => {})); // Never resolves
+    axiosInstance.get.mockImplementation(() => new Promise(() => {})); // Never resolves
 
     // Act
     render(<ReportWidget />, { wrapper: WrapperComponent });
 
     // Assert
     expect(screen.getByText('در حال بارگذاری گزارش‌ها...')).toBeInTheDocument();
-    expect(axios.get).toHaveBeenCalledWith('/api/reports/?limit=5');
+    expect(axiosInstance.get).toHaveBeenCalledWith('/api/reports/?limit=5');
   });
 
   it('should render reports when API call succeeds', async () => {
     // Arrange
-    axios.get.mockResolvedValue({ data: mockReports });
+    axiosInstance.get.mockResolvedValue({ data: mockReports });
 
     // Act
     render(<ReportWidget />, { wrapper: WrapperComponent });
@@ -84,7 +84,7 @@ describe('ReportWidget Component', () => {
 
   it('should show error toast when API call fails', async () => {
     // Arrange
-    axios.get.mockRejectedValue(new Error('Network Error'));
+    axiosInstance.get.mockRejectedValue(new Error('Network Error'));
 
     // Act
     render(<ReportWidget />, { wrapper: WrapperComponent });
@@ -97,7 +97,7 @@ describe('ReportWidget Component', () => {
 
   it('should render message when no reports are found', async () => {
     // Arrange
-    axios.get.mockResolvedValue({ data: [] });
+    axiosInstance.get.mockResolvedValue({ data: [] });
 
     // Act
     render(<ReportWidget />, { wrapper: WrapperComponent });

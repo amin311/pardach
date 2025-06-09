@@ -152,3 +152,53 @@ class DesignFamily(models.Model):
         verbose_name_plural = _("طرح‌های-خانواده‌ها")
         ordering = ['family', 'position']
         unique_together = ('design', 'family')
+
+class PrintLocation(BaseModel):
+    """مدل محل‌های چاپ روی لباس (آستین، پشت، جیب و...)"""
+    LOCATION_CHOICES = [
+        ('front', _('جلو')),
+        ('back', _('پشت')),
+        ('sleeve_left', _('آستین چپ')),
+        ('sleeve_right', _('آستین راست')),
+        ('pocket', _('جیب')),
+        ('collar', _('یقه')),
+        ('rakab', _('رکب')),
+        ('cuff', _('سر آستین')),
+        ('hem', _('دامن')),
+    ]
+    
+    code = models.CharField(max_length=32, unique=True, verbose_name=_("کد محل"))
+    name = models.CharField(max_length=100, verbose_name=_("نام محل روی لباس"))
+    location_type = models.CharField(max_length=20, choices=LOCATION_CHOICES, verbose_name=_("نوع محل"))
+    price_modifier = models.DecimalField(
+        max_digits=7, 
+        decimal_places=2, 
+        default=0,
+        verbose_name=_("ضریب قیمت")
+    )
+    max_width_cm = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        null=True, blank=True,
+        verbose_name=_("حداکثر عرض (سانتی‌متر)")
+    )
+    max_height_cm = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        null=True, blank=True,
+        verbose_name=_("حداکثر ارتفاع (سانتی‌متر)")
+    )
+    is_active = models.BooleanField(default=True, verbose_name=_("فعال"))
+    description = models.TextField(blank=True, verbose_name=_("توضیحات"))
+
+    class Meta:
+        verbose_name = _("محل چاپ")
+        verbose_name_plural = _("محل‌های چاپ")
+        ordering = ['location_type', 'name']
+
+    def __str__(self):
+        return f"{self.name} ({self.get_location_type_display()})"
+
+    def calculate_print_cost(self, base_price, design_complexity=1):
+        """محاسبه هزینه چاپ بر اساس ضریب محل"""
+        return base_price * float(self.price_modifier) * design_complexity

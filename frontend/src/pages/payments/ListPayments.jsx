@@ -11,7 +11,7 @@ import {
   FaEye, FaEdit, FaTrash, FaFilter, FaMoneyBill, 
   FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaBan
 } from 'react-icons/fa';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { useAuth } from '../../contexts/AuthContext';
 
 // تبدیل وضعیت پرداخت به رنگ و آیکون
@@ -54,7 +54,7 @@ const ListPayments = () => {
         url += `?status=${statusFilter}`;
       }
       
-      const response = await axios.get(url);
+      const response = await axiosInstance.get(url);
       setPayments(response.data);
     } catch (error) {
       console.error('خطا در دریافت پرداخت‌ها:', error);
@@ -79,7 +79,7 @@ const ListPayments = () => {
     if (!selectedPayment) return;
     
     try {
-      await axios.delete(`/api/payment/payments/${selectedPayment.id}/`);
+      await axiosInstance.delete(`/api/payment/payments/${selectedPayment.id}/`);
       
       // بروزرسانی لیست پس از حذف
       setPayments(payments.filter(p => p.id !== selectedPayment.id));

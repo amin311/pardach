@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -124,11 +124,11 @@ const UserTemplateDetail = () => {
     try {
       setLoading(true);
       // دریافت اطلاعات قالب کاربر
-      const templateResponse = await axios.get(`/api/templates/user-templates/${id}/`);
+      const templateResponse = await axiosInstance.get(`/api/templates/user-templates/${id}/`);
       setUserTemplate(templateResponse.data);
       
       // دریافت بخش‌های قالب کاربر
-      const sectionsResponse = await axios.get(`/api/templates/user-templates/${id}/sections/`);
+      const sectionsResponse = await axiosInstance.get(`/api/templates/user-templates/${id}/sections/`);
       setUserSections(sectionsResponse.data);
       
       setError(null);
@@ -148,7 +148,7 @@ const UserTemplateDetail = () => {
     }
     
     try {
-      await axios.delete(`/api/templates/user-templates/${id}/`);
+      await axiosInstance.delete(`/api/templates/user-templates/${id}/`);
       toast.success('قالب با موفقیت حذف شد');
       navigate('/user-templates');
     } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { FaLightbulb, FaArrowRight, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 /**
@@ -106,7 +106,7 @@ const DashboardGuide = ({ userId, hasSeenGuide }) => {
     setShowGuideButton(true);
     
     try {
-      await axios.post('/api/main/settings/', 
+      await axiosInstance.post('/api/main/settings/', 
         {
           key: `user_${userId}_dashboard_guide`,
           value: 'true'

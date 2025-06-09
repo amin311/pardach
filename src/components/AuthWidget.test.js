@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AuthWidget from './AuthWidget';
-import axios from 'axios';
+import axiosInstance from '../lib/axios';
 import { toast } from 'react-toastify';
 
 // Mock مورد نیاز
@@ -54,7 +54,7 @@ describe('کامپوننت AuthWidget', () => {
       }
     };
     
-    axios.post.mockResolvedValue(mockResponse);
+    axiosInstance.post.mockResolvedValue(mockResponse);
     
     render(<AuthWidget setUser={mockSetUser} />);
     
@@ -67,7 +67,7 @@ describe('کامپوننت AuthWidget', () => {
     
     // منتظر اتمام درخواست
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith('/api/auth/login/', {
+      expect(axiosInstance.post).toHaveBeenCalledWith('/api/auth/login/', {
         username: 'testuser',
         password: 'password123'
       });
@@ -87,7 +87,7 @@ describe('کامپوننت AuthWidget', () => {
       }
     };
     
-    axios.post.mockResolvedValue(mockResponse);
+    axiosInstance.post.mockResolvedValue(mockResponse);
     
     render(<AuthWidget setUser={mockSetUser} />);
     
@@ -104,7 +104,7 @@ describe('کامپوننت AuthWidget', () => {
     
     // منتظر اتمام درخواست
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith('/api/auth/register/', {
+      expect(axiosInstance.post).toHaveBeenCalledWith('/api/auth/register/', {
         username: 'newuser',
         email: 'new@example.com',
         password: 'password123',
@@ -117,7 +117,7 @@ describe('کامپوننت AuthWidget', () => {
   });
 
   test('نمایش خطا در صورت مشکل در ورود', async () => {
-    axios.post.mockRejectedValue(new Error('Login failed'));
+    axiosInstance.post.mockRejectedValue(new Error('Login failed'));
     
     render(<AuthWidget setUser={jest.fn()} />);
     

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from '../lib/axios';
 import { toast } from 'react-toastify';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -14,7 +14,7 @@ const BusinessWidget = ({ userId }) => {
   useEffect(() => {
     const fetchActiveBusinesses = async () => {
       try {
-        const response = await axios.get('/api/business/businesses/?status=active', {
+        const response = await axiosInstance.get('/api/business/businesses/?status=active', {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         // حداکثر 5 کسب‌وکار نمایش داده شود

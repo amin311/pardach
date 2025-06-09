@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -68,7 +68,7 @@ const DetailTemplate = () => {
   const fetchTemplate = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/templates/templates/${id}/`);
+      const response = await axiosInstance.get(`/api/templates/templates/${id}/`);
       setTemplate(response.data);
       setLoading(false);
     } catch (error) {

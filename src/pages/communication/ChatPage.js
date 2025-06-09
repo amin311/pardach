@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -24,7 +24,7 @@ const ChatPage = ({ userId }) => {
     }
 
     // دریافت اطلاعات چت
-    axios.get(`/api/communication/chats/${id}/`, {
+    axiosInstance.get(`/api/communication/chats/${id}/`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -37,7 +37,7 @@ const ChatPage = ({ userId }) => {
       });
 
     // دریافت پیام‌های چت
-    axios.get(`/api/communication/chats/${id}/messages/`, {
+    axiosInstance.get(`/api/communication/chats/${id}/messages/`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => {
@@ -117,7 +117,7 @@ const ChatPage = ({ userId }) => {
     if (!loading && messages.length > 0) {
       messages.forEach(message => {
         if (!message.is_read && message.sender?.id !== userId) {
-          axios.post(`/api/communication/messages/${message.id}/read/`, {}, {
+          axiosInstance.post(`/api/communication/messages/${message.id}/read/`, {}, {
             headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
           }).catch(err => console.error('Error marking message as read:', err));
         }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -19,7 +19,7 @@ const DetailNotification = ({ userId, isAdmin }) => {
     try {
       setLoading(true);
       
-      const response = await axios.get(`/api/notification/${id}/`, {
+      const response = await axiosInstance.get(`/api/notification/${id}/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -42,7 +42,7 @@ const DetailNotification = ({ userId, isAdmin }) => {
   // علامت‌گذاری اعلان به عنوان خوانده‌شده
   const markAsRead = async () => {
     try {
-      await axios.post(`/api/notification/${id}/read/`, {}, {
+      await axiosInstance.post(`/api/notification/${id}/read/`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -57,7 +57,7 @@ const DetailNotification = ({ userId, isAdmin }) => {
   // آرشیو کردن اعلان
   const archiveNotification = async () => {
     try {
-      await axios.post(`/api/notification/${id}/archive/`, {}, {
+      await axiosInstance.post(`/api/notification/${id}/archive/`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       

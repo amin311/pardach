@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 
@@ -17,7 +17,7 @@ const BusinessDetailWidget = ({ days = 30, useCombinedApi = true }) => {
     try {
       // استفاده از API یکپارچه اگر فعال باشد
       if (useCombinedApi) {
-        const response = await axios.get(`/api/dashboard/combined/?days=${days}`, {
+        const response = await axiosInstance.get(`/api/dashboard/combined/?days=${days}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         
@@ -30,7 +30,7 @@ const BusinessDetailWidget = ({ days = 30, useCombinedApi = true }) => {
         });
       } else {
         // استفاده از API جداگانه کسب و کار
-        const response = await axios.get(`/api/dashboard/business/?days=${days}`, {
+        const response = await axiosInstance.get(`/api/dashboard/business/?days=${days}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setBusinessData(response.data);
@@ -45,7 +45,7 @@ const BusinessDetailWidget = ({ days = 30, useCombinedApi = true }) => {
       
       // تلاش برای استفاده از API قبلی در صورت خطا
       try {
-        const fallbackResponse = await axios.get(`/api/dashboard/business/?days=${days}`, {
+        const fallbackResponse = await axiosInstance.get(`/api/dashboard/business/?days=${days}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         });
         setBusinessData(fallbackResponse.data);

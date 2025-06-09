@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,7 +48,7 @@ const MainPage = () => {
 
   const fetchUserInfo = async () => {
     try {
-      const response = await axios.get('/api/auth/user-info/', {
+      const response = await axiosInstance.get('/api/auth/user-info/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -65,7 +65,7 @@ const MainPage = () => {
 
   const fetchMainPageData = async () => {
     try {
-      const response = await axios.get('/api/main/page-summary/', {
+      const response = await axiosInstance.get('/api/main/page-summary/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       
@@ -86,7 +86,7 @@ const MainPage = () => {
   
   const checkGuideStatus = async (userId) => {
     try {
-      const response = await axios.get('/api/main/settings/', {
+      const response = await axiosInstance.get('/api/main/settings/', {
         headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
       });
       

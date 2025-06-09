@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -30,9 +30,9 @@ const BatchUpload = () => {
         const headers = { Authorization: `Bearer ${localStorage.getItem('access_token')}` };
         
         const [categoriesRes, tagsRes, familiesRes] = await Promise.all([
-          axios.get('/api/designs/categories/', { headers }),
-          axios.get('/api/designs/tags/', { headers }),
-          axios.get('/api/designs/families/', { headers })
+          axiosInstance.get('/api/designs/categories/', { headers }),
+          axiosInstance.get('/api/designs/tags/', { headers }),
+          axiosInstance.get('/api/designs/families/', { headers })
         ]);
         
         setCategories(categoriesRes.data.map(cat => ({ value: cat.id, label: cat.full_path || cat.name })));
@@ -140,7 +140,7 @@ const BatchUpload = () => {
       formData.tags.forEach(id => form.append('tags', id));
       formData.families.forEach(id => form.append('families', id));
       
-      const response = await axios.post('/api/designs/batch-upload/', form, {
+      const response = await axiosInstance.post('/api/designs/batch-upload/', form, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
           'Content-Type': 'multipart/form-data'

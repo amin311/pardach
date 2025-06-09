@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -21,7 +21,7 @@ const ListNotifications = ({ userId, isAdmin }) => {
       url += `?is_read=${filter === 'read'}`;
     }
 
-    axios.get(url, {
+    axiosInstance.get(url, {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => {
@@ -37,7 +37,7 @@ const ListNotifications = ({ userId, isAdmin }) => {
 
   // علامت‌گذاری اعلان به‌عنوان خوانده‌شده
   const markAsRead = (notificationId) => {
-    axios.post(`/api/communication/notifications/${notificationId}/read/`, {}, {
+    axiosInstance.post(`/api/communication/notifications/${notificationId}/read/`, {}, {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
     })
       .then(res => {
@@ -68,7 +68,7 @@ const ListNotifications = ({ userId, isAdmin }) => {
     // علامت‌گذاری هر اعلان به‌صورت جداگانه
     Promise.all(
       unreadNotifications.map(notification => 
-        axios.post(`/api/communication/notifications/${notification.id}/read/`, {}, {
+        axiosInstance.post(`/api/communication/notifications/${notification.id}/read/`, {}, {
           headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
         })
       )

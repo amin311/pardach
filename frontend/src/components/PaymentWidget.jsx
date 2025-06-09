@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, Badge, VStack, Heading, Divider, Spinner, Flex, Icon } from '@chakra-ui/react';
 import { FaMoneyCheckAlt, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaBan } from 'react-icons/fa';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 
 // تبدیل وضعیت پرداخت به رنگ و آیکون
@@ -30,7 +30,7 @@ const PaymentWidget = () => {
       try {
         setLoading(true);
         // دریافت ۵ پرداخت اخیر
-        const response = await axios.get('/api/payment/user-payments/?limit=5');
+        const response = await axiosInstance.get('/api/payment/user-payments/?limit=5');
         setPayments(response.data);
         setError(null);
       } catch (err) {

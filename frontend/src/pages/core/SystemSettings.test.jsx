@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SystemSettings from './SystemSettings';
-import axios from 'axios';
+import axiosInstance from './lib/axios';
 import { toast } from 'react-toastify';
 
 // Mock کردن axios
@@ -28,7 +28,7 @@ describe('کامپوننت مدیریت تنظیمات سیستم', () => {
 
   test('برای ادمین‌ها فرم و لیست تنظیمات را نمایش دهد', async () => {
     // Mock کردن پاسخ دریافت تنظیمات
-    axios.get.mockResolvedValue({
+    axiosInstance.get.mockResolvedValue({
       data: [
         { key: 'max_file_size_mb', value: 5, description: 'حداکثر حجم فایل' }
       ]
@@ -50,8 +50,8 @@ describe('کامپوننت مدیریت تنظیمات سیستم', () => {
 
   test('افزودن تنظیم جدید', async () => {
     // Mock کردن پاسخ‌های API
-    axios.get.mockResolvedValue({ data: [] });
-    axios.post.mockResolvedValue({
+    axiosInstance.get.mockResolvedValue({ data: [] });
+    axiosInstance.post.mockResolvedValue({
       data: { key: 'new_setting', value: 10, description: 'توضیح تست' }
     });
 
@@ -78,7 +78,7 @@ describe('کامپوننت مدیریت تنظیمات سیستم', () => {
 
     // بررسی فراخوانی API
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith(
+      expect(axiosInstance.post).toHaveBeenCalledWith(
         '/api/core/settings/',
         { key: 'new_setting', value: '10', description: 'توضیح تست' },
         expect.any(Object)
@@ -89,7 +89,7 @@ describe('کامپوننت مدیریت تنظیمات سیستم', () => {
 
   test('هنگام بارگذاری با خطا پیام مناسب نمایش دهد', async () => {
     // Mock کردن خطا در API
-    axios.get.mockRejectedValue(new Error('خطای شبکه'));
+    axiosInstance.get.mockRejectedValue(new Error('خطای شبکه'));
 
     render(<SystemSettings isAdmin={true} />);
 
