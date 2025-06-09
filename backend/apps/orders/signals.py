@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
-from .models import Order, OrderStage, OrderSection
+from .models import Order, OrderStage, OrderSection, OrderStatusHistory, OrderAssignment, PrintProcess
 from apps.set_design.models import SetDesign
 from django.contrib.auth import get_user_model
 
@@ -174,4 +174,59 @@ def send_order_notifications(sender, instance, created, **kwargs):
     
     except ImportError:
         # مدل Notification وجود ندارد
-        pass 
+        pass
+
+@receiver(post_save, sender=Order)
+def create_order_status_history(sender, instance, created, **kwargs):
+    """ثبت تاریخچه تغییرات وضعیت سفارش"""
+    if created:
+        OrderStatusHistory.objects.create(
+            order=instance,
+            status=instance.status,
+            notes="ایجاد سفارش جدید"
+        )
+    else:
+        # بررسی تغییر وضعیت
+        old_instance = Order.objects.get(pk=instance.pk)
+        if old_instance.status != instance.status:
+            OrderStatusHistory.objects.create(
+                order=instance,
+                status=instance.status,
+                notes=f"تغییر وضعیت از {old_instance.get_status_display()} به {instance.get_status_display()}"
+            )
+
+@receiver(post_save, sender=OrderAssignment)
+def handle_order_assignment_status(sender, instance, created, **kwargs):
+    """مدیریت تغییرات وضعیت تکلیف سفارش"""
+    if not created:
+        old_instance = OrderAssignment.objects.get(pk=instance.pk)
+        if old_instance.status != instance.status:
+            # بررسی تکمیل همه تکلیف‌ها
+            if instance.status == 'completed':
+                all_assignments = OrderAssignment.objects.filter(order=instance.order)
+                all_completed = all_assignments.exclude(status='completed').exists()
+                
+                if not all_completed:
+                    # به‌روزرسانی وضعیت سفارش
+                    instance.order.status = 'completed'
+                    instance.order.actual_delivery_date = timezone.now().date()
+                    instance.order.save()
+
+@receiver(post_save, sender=PrintProcess)
+def handle_print_process_status(sender, instance, created, **kwargs):
+    """مدیریت تغییرات وضعیت فرآیند چاپ"""
+    if not created:
+        old_instance = PrintProcess.objects.get(pk=instance.pk)
+        if old_instance.status != instance.status:
+            if instance.status == 'completed':
+                instance.completed_at = timezone.now()
+                instance.save()
+                
+                # بررسی تکمیل همه فرآیندهای چاپ
+                all_processes = PrintProcess.objects.filter(order_item=instance.order_item)
+                all_completed = all_processes.exclude(status='completed').exists()
+                
+                if not all_completed:
+                    # به‌روزرسانی وضعیت آیتم سفارش
+                    instance.order_item.order_detail.order.status = 'in_progress'
+                    instance.order_item.order_detail.order.save() 

@@ -11,8 +11,8 @@ from django.contrib.auth import get_user_model
 class BaseModel(models.Model):
     """کلاس پایه برای استفاده در همه مدل‌های دیگر"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, verbose_name=_("شناسه"))
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("آخرین بروزرسانی"))
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True, verbose_name=_("آخرین بروزرسانی"))
 
     class Meta:
         abstract = True

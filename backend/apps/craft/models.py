@@ -20,13 +20,13 @@ class PhysicalStamp(BaseModel):
     
     name = models.CharField(max_length=255, verbose_name=_("نام مهر"))
     stamp_type = models.CharField(max_length=20, choices=STAMP_TYPE_CHOICES, verbose_name=_("نوع مهر"))
-    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name='physical_stamps', verbose_name=_("طرح"))
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='physical_stamps', verbose_name=_("کسب‌وکار"))
+    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name='craft_physical_stamps', verbose_name=_("طرح"))
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='craft_physical_stamps', verbose_name=_("کسب‌وکار"))
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active', verbose_name=_("وضعیت"))
     
     dimensions = models.CharField(max_length=100, verbose_name=_("ابعاد"))
     material = models.CharField(max_length=100, verbose_name=_("جنس"))
-    production_date = models.DateField(verbose_name=_("تاریخ ساخت"))
+    production_date = models.DateField(verbose_name=_("تاریخ ساخت"), null=True, blank=True)
     last_used = models.DateTimeField(null=True, blank=True, verbose_name=_("آخرین استفاده"))
     usage_count = models.PositiveIntegerField(default=0, verbose_name=_("تعداد استفاده"))
     
@@ -52,8 +52,8 @@ class RequestPhysicalStamp(BaseModel):
         ('cancelled', _('لغو شده')),
     )
     
-    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='stamp_requests', verbose_name=_("کسب‌وکار"))
-    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name='stamp_requests', verbose_name=_("طرح"))
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='craft_stamp_requests', verbose_name=_("کسب‌وکار"))
+    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name='craft_stamp_requests', verbose_name=_("طرح"))
     stamp_type = models.CharField(max_length=20, choices=PhysicalStamp.STAMP_TYPE_CHOICES, verbose_name=_("نوع مهر"))
     
     dimensions = models.CharField(max_length=100, verbose_name=_("ابعاد درخواستی"))
@@ -64,7 +64,7 @@ class RequestPhysicalStamp(BaseModel):
     notes = models.TextField(blank=True, verbose_name=_("توضیحات"))
     
     # اطلاعات تکمیلی
-    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_stamp_requests', verbose_name=_("تأیید کننده"))
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_craft_stamp_requests', verbose_name=_("تأیید کننده"))
     approved_at = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان تأیید"))
     estimated_completion = models.DateField(null=True, blank=True, verbose_name=_("تاریخ تخمینی تکمیل"))
     actual_completion = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان تکمیل واقعی"))

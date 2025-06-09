@@ -5,12 +5,64 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 from django.conf import settings
 from apps.business.models import Business
-from apps.designs.models import Design
+from apps.designs.models import Design, Template
 from apps.templates_app.models import UserTemplate
 from apps.core.utils import log_error, to_jalali
 from django.db.models import SET_NULL
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 
 User = get_user_model()
+
+class OrderItem(models.Model):
+    """آیتم‌های سفارش شامل طرح‌ها و محل‌های چاپ"""
+    order_detail = models.ForeignKey('OrderDetail', on_delete=models.CASCADE, related_name='items', verbose_name=_("جزئیات سفارش"), null=True, blank=True)
+    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name='order_items', verbose_name=_("طرح"), null=True, blank=True)
+    print_location = models.ForeignKey('print_locations.PrintLocation', on_delete=models.PROTECT, related_name='order_items', verbose_name=_("محل چاپ"), null=True, blank=True)
+    
+    # فیلدهای اضافه شده مجدد
+    quantity = models.PositiveIntegerField(verbose_name=_("تعداد"), null=True, blank=True)
+    color_count = models.PositiveIntegerField(default=1, verbose_name=_("تعداد رنگ"))
+    print_dimensions = models.CharField(max_length=100, verbose_name=_("ابعاد چاپ"), null=True, blank=True)
+    
+    # قیمت‌ها
+    unit_price = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("قیمت واحد (ریال)"))
+    total_price = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("قیمت کل (ریال)"))
+    
+    # یادداشت‌ها
+    notes = models.TextField(blank=True, verbose_name=_("یادداشت‌ها"))
+    
+    # تاریخ‌ها
+    created_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(null=True, blank=True, verbose_name=_("آخرین بروزرسانی"))
+
+    @property
+    def jalali_created_at(self):
+        """تبدیل تاریخ ایجاد به شمسی"""
+        return to_jalali(self.created_at) if self.created_at else None
+
+    def save(self, *args, **kwargs):
+        # محاسبه خودکار قیمت بر اساس آیتم انتخاب شده
+        if self.design and not self.unit_price:
+            self.unit_price = self.design.price if hasattr(self.design, 'price') else 0
+            
+        # محاسبه قیمت کل بر اساس تعداد
+        if self.quantity and self.unit_price:
+            self.total_price = self.unit_price * self.quantity
+        elif self.order_detail and self.unit_price:
+            self.total_price = self.unit_price * self.order_detail.quantity
+            
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        design_title = self.design.title if self.design else 'بدون طرح'
+        location_name = self.print_location.name if self.print_location else 'بدون محل چاپ'
+        return f"{design_title} - {location_name}"
+
+    class Meta:
+        verbose_name = _("آیتم سفارش")
+        verbose_name_plural = _("آیتم‌های سفارش")
+        ordering = ['-created_at']
 
 class Order(BaseModel):
     """مدل برای مدیریت سفارش‌های کاربران"""
@@ -58,14 +110,21 @@ class Order(BaseModel):
     business = models.ForeignKey('business.Business', on_delete=models.CASCADE, related_name='orders', verbose_name=_("کسب‌وکار"), null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name=_("وضعیت"))
     
+    # اندازه لباس (عرض و ارتفاع)
+    width = models.PositiveIntegerField(null=True, blank=True, verbose_name=_("عرض لباس (cm)"))
+    height = models.PositiveIntegerField(null=True, blank=True, verbose_name=_("ارتفاع لباس (cm)"))
     garment_size = models.CharField(max_length=10, choices=GARMENT_SIZE_CHOICES, verbose_name=_("اندازه لباس"), null=True, blank=True)
-    print_type = models.CharField(max_length=15, choices=PRINT_TYPE_CHOICES, default='manual', verbose_name=_("نوع چاپ"), null=True, blank=True)
     custom_size_details = models.JSONField(null=True, blank=True, verbose_name=_("جزئیات سایز سفارشی"))
+    
+    # نوع پارچه، رنگ و سایر مشخصات
     fabric_type = models.CharField(max_length=20, choices=FABRIC_TYPE_CHOICES, verbose_name=_("نوع پارچه"), null=True, blank=True)
     fabric_color = models.CharField(max_length=50, verbose_name=_("رنگ پارچه"), null=True, blank=True)
     fabric_material = models.CharField(max_length=50, verbose_name=_("جنس پارچه"), null=True, blank=True)
     fabric_weight = models.PositiveIntegerField(help_text=_("گرم بر متر مربع"), verbose_name=_("وزن پارچه"), null=True, blank=True)
     fabric_details = models.TextField(blank=True, verbose_name=_("توضیحات اضافی پارچه"))
+    
+    # گزینه‌های چاپ
+    print_option = models.CharField(max_length=15, choices=PRINT_TYPE_CHOICES, default='manual', verbose_name=_("گزینه چاپ"), null=True, blank=True)
     
     total_price = models.DecimalField(max_digits=12, decimal_places=0, verbose_name=_("قیمت کل (ریال)"), null=True, blank=True)
     deposit_amount = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("مبلغ پیش‌پرداخت (ریال)"))
@@ -115,51 +174,6 @@ class Order(BaseModel):
         verbose_name = _("سفارش")
         verbose_name_plural = _("سفارش‌ها")
         ordering = ['-created_at']
-
-class OrderItem(BaseModel):
-    """مدل برای مدیریت آیتم‌های سفارش"""
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items', verbose_name=_("سفارش"))
-    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name='order_items', verbose_name=_("طرح"), null=True, blank=True)
-    quantity = models.PositiveIntegerField(verbose_name=_("تعداد"), null=True, blank=True)
-    unit_price = models.DecimalField(max_digits=12, decimal_places=0, verbose_name=_("قیمت واحد (ریال)"), null=True, blank=True)
-    
-    print_location = models.ForeignKey('print_locations.PrintLocation', on_delete=models.PROTECT, verbose_name=_("محل چاپ"), null=True, blank=True)
-    print_dimensions = models.CharField(max_length=100, verbose_name=_("ابعاد چاپ"), null=True, blank=True)
-    color_count = models.PositiveIntegerField(default=1, verbose_name=_("تعداد رنگ"))
-    
-    notes = models.TextField(blank=True, verbose_name=_("توضیحات"))
-    
-    @property
-    def jalali_created_at(self):
-        """تبدیل تاریخ ایجاد به شمسی"""
-        return to_jalali(self.created_at)
-
-    def save(self, *args, **kwargs):
-        # محاسبه خودکار قیمت بر اساس آیتم انتخاب شده
-        if self.design and not self.unit_price:
-            self.unit_price = self.design.price if hasattr(self.design, 'price') else 0
-            
-        # محاسبه قیمت کل بر اساس تعداد
-        single_price = self.unit_price / self.quantity if self.quantity > 0 and self.unit_price else 0
-        self.unit_price = single_price * self.quantity
-        
-        try:
-            super().save(*args, **kwargs)
-            # بروزرسانی قیمت کل سفارش
-            if self.order:
-                self.order.calculate_total_price()
-        except Exception as e:
-            log_error(f"Error saving order item for order {self.order.id}", e)
-            raise
-
-    def __str__(self):
-        item_name = self.design.title if self.design else 'بدون آیتم'
-        return f"{item_name} - سفارش {str(self.order.id)[:8]}"
-
-    class Meta:
-        verbose_name = _("آیتم سفارش")
-        verbose_name_plural = _("آیتم‌های سفارش")
-        ordering = ['order', 'id']
 
 class OrderSection(BaseModel):
     """مدل برای مدیریت بخش‌های انتخاب شده در سفارش"""
@@ -279,3 +293,161 @@ class OrderStage(BaseModel):
         verbose_name = _("مرحله سفارش")
         verbose_name_plural = _("مراحل سفارش")
         ordering = ['order', 'stage_type']
+
+class OrderDetail(models.Model):
+    """جزئیات سفارش شامل مشخصات لباس و چاپ"""
+    SIZE_CHOICES = (
+        ('XS', 'XS'),
+        ('S', 'S'),
+        ('M', 'M'),
+        ('L', 'L'),
+        ('XL', 'XL'),
+        ('XXL', 'XXL'),
+    )
+
+    FABRIC_CHOICES = (
+        ('cotton', _('پنبه')),
+        ('polyester', _('پلی‌استر')),
+        ('mixed', _('مختلط')),
+    )
+
+    PRINT_TYPE_CHOICES = (
+        ('screen', _('چاپ سیلک')),
+        ('digital', _('چاپ دیجیتال')),
+        ('sublimation', _('چاپ سابلیمیشن')),
+        ('embroidery', _('گلدوزی')),
+    )
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='details', verbose_name=_("سفارش"))
+    template = models.ForeignKey(Template, on_delete=models.PROTECT, related_name='order_details', verbose_name=_("قالب"))
+    
+    # مشخصات لباس
+    size = models.CharField(max_length=5, choices=SIZE_CHOICES, verbose_name=_("سایز"))
+    fabric = models.CharField(max_length=20, choices=FABRIC_CHOICES, verbose_name=_("نوع پارچه"))
+    color = models.CharField(max_length=50, verbose_name=_("رنگ لباس"))
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)], verbose_name=_("تعداد"))
+    
+    # مشخصات چاپ
+    print_type = models.CharField(max_length=20, choices=PRINT_TYPE_CHOICES, verbose_name=_("نوع چاپ"))
+    has_rakab = models.BooleanField(default=False, verbose_name=_("دارای رکب"))
+    rakab_type = models.CharField(max_length=50, blank=True, verbose_name=_("نوع رکب"))
+    
+    # قیمت‌ها
+    unit_price = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("قیمت واحد (ریال)"))
+    total_price = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("قیمت کل (ریال)"))
+    
+    # یادداشت‌ها
+    notes = models.TextField(blank=True, verbose_name=_("یادداشت‌ها"))
+
+    def save(self, *args, **kwargs):
+        if not self.total_price:
+            self.total_price = self.unit_price * self.quantity
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.template.name} - {self.size} - {self.quantity} عدد"
+
+    class Meta:
+        verbose_name = _("جزئیات سفارش")
+        verbose_name_plural = _("جزئیات سفارش‌ها")
+
+class PrintProcess(BaseModel):
+    """مدل مراحل چاپ"""
+    PROCESS_TYPE_CHOICES = (
+        ('design', _('طراحی')),
+        ('print', _('چاپ')),
+        ('laser', _('لیزر')),
+        ('embroidery', _('گلدوزی')),
+        ('packaging', _('بسته‌بندی')),
+        ('delivery', _('ارسال')),
+    )
+
+    STATUS_CHOICES = (
+        ('pending', _('در انتظار')),
+        ('in_progress', _('در حال انجام')),
+        ('completed', _('تکمیل شده')),
+        ('failed', _('ناموفق')),
+        ('cancelled', _('لغو شده')),
+    )
+
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='print_processes', verbose_name=_("سفارش"), null=True, blank=True)
+    process_type = models.CharField(max_length=50, choices=PROCESS_TYPE_CHOICES, verbose_name=_("نوع فرآیند"))
+    business = models.ForeignKey('business.Business', on_delete=models.CASCADE, related_name='print_processes', verbose_name=_("کسب‌وکار"))
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_processes', verbose_name=_("واگذار شده به"))
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending', verbose_name=_("وضعیت"))
+    notes = models.TextField(blank=True, verbose_name=_("یادداشت‌ها"))
+    output_file = models.FileField(upload_to='process_outputs/', blank=True, null=True, verbose_name=_("فایل خروجی"))
+    quality_check = models.BooleanField(default=False, verbose_name=_("بازرسی کیفیت"))
+    quality_check_notes = models.TextField(blank=True, verbose_name=_("یادداشت‌های بازرسی"))
+    cost = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("هزینه"))
+    is_urgent = models.BooleanField(default=False, verbose_name=_("فوری"))
+    order_number = models.PositiveIntegerField(default=0, verbose_name=_("شماره ترتیب"))
+
+    def __str__(self):
+        return f"{self.get_process_type_display()} برای سفارش {self.order.id}"
+
+    class Meta:
+        verbose_name = _("فرآیند چاپ")
+        verbose_name_plural = _("فرآیندهای چاپ")
+        ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        if self.status == 'in_progress' and not self.created_at:
+            self.created_at = timezone.now()
+        elif self.status in ['completed', 'failed', 'cancelled'] and not self.updated_at:
+            self.updated_at = timezone.now()
+        super().save(*args, **kwargs)
+
+class OrderAssignment(models.Model):
+    """تکلیف سفارش به کسب‌وکارها"""
+    PROCESS_TYPE_CHOICES = (
+        ('print', _('چاپ')),
+        ('set', _('ست‌بندی')),
+        ('delivery', _('تحویل')),
+    )
+
+    STATUS_CHOICES = (
+        ('pending', _('در انتظار')),
+        ('accepted', _('پذیرفته شده')),
+        ('rejected', _('رد شده')),
+        ('completed', _('تکمیل شده')),
+    )
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='assignments', verbose_name=_("سفارش"))
+    business = models.ForeignKey(Business, on_delete=models.PROTECT, related_name='order_assignments', verbose_name=_("کسب‌وکار"))
+    process_type = models.CharField(max_length=20, choices=PROCESS_TYPE_CHOICES, verbose_name=_("نوع فرآیند"))
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name=_("وضعیت"))
+    
+    # قیمت‌ها
+    price = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("قیمت (ریال)"))
+    
+    # تاریخ‌ها
+    deadline = models.DateTimeField(null=True, blank=True, verbose_name=_("مهلت انجام"))
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان تکمیل"))
+    
+    # یادداشت‌ها
+    notes = models.TextField(blank=True, verbose_name=_("یادداشت‌ها"))
+
+    def __str__(self):
+        return f"{self.get_process_type_display()} - {self.business.name}"
+
+    class Meta:
+        verbose_name = _("تکلیف سفارش")
+        verbose_name_plural = _("تکلیف‌های سفارش")
+        unique_together = ('order', 'business', 'process_type')
+
+class OrderStatusHistory(models.Model):
+    """تاریخچه تغییرات وضعیت سفارش"""
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='status_history', verbose_name=_("سفارش"))
+    status = models.CharField(max_length=20, choices=Order.STATUS_CHOICES, verbose_name=_("وضعیت"))
+    changed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='order_status_changes', verbose_name=_("تغییر دهنده"))
+    notes = models.TextField(blank=True, verbose_name=_("یادداشت‌ها"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ تغییر"))
+
+    def __str__(self):
+        return f"{self.order} - {self.get_status_display()}"
+
+    class Meta:
+        verbose_name = _("تاریخچه وضعیت سفارش")
+        verbose_name_plural = _("تاریخچه وضعیت سفارش‌ها")
+        ordering = ['-created_at']
