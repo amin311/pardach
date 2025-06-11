@@ -3,7 +3,7 @@ import {
   Paper, Typography, Table, TableBody, TableCell, TableContainer, 
   TableHead, TableRow, Button, Box, Chip, CircularProgress
 } from '@mui/material';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../lib/axios';
 
 const statusColors = {
   waiting: 'warning',

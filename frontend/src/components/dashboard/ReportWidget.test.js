@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import ReportWidget from './ReportWidget';
 
