@@ -2,6 +2,7 @@
 import os
 import sys
 import django
+from django.contrib.auth import get_user_model
 
 # اضافه کردن مسیر backend به Python path
 sys.path.append('backend')
@@ -9,7 +10,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend_project.settings')
 
 try:
     django.setup()
-    from apps.authentication.models import User
+    User = get_user_model()
     
     # ایجاد کاربر تست
     user, created = User.objects.get_or_create(

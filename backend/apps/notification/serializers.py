@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from .models import Notification, NotificationCategory
 from apps.core.utils import to_jalali
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
 from apps.business.models import Business
 from apps.authentication.serializers import UserSerializer
 from apps.business.serializers import BusinessSerializer
+
+User = get_user_model()
 
 class NotificationCategorySerializer(serializers.ModelSerializer):
     created_at_jalali = serializers.SerializerMethodField()

@@ -1,10 +1,11 @@
 import os
 import django
+from django.contrib.auth import get_user_model
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend_project.settings')
 django.setup()
 
-from apps.authentication.models import User
+User = get_user_model()
 
 # ایجاد کاربر تست
 try:

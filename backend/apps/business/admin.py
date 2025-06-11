@@ -1,16 +1,17 @@
 from django.contrib import admin
-from .models import Business, BusinessUser
 from django.utils.translation import gettext_lazy as _
+from .models import Business, EmployeeRole
 
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner', 'status')
-    list_filter = ('status',)
-    search_fields = ('name', 'description', 'owner__username')
-    prepopulated_fields = {'slug': ('name',)}
+    list_display = ('name', 'type', 'owner')
+    list_filter = ('type',)
+    search_fields = ('name', 'owner__username')
+    raw_id_fields = ('owner',)
 
-@admin.register(BusinessUser)
-class BusinessUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'business', 'role')
-    list_filter = ('role', 'business')
+@admin.register(EmployeeRole)
+class EmployeeRoleAdmin(admin.ModelAdmin):
+    list_display = ('user', 'business', 'role', 'payment_type', 'is_active')
+    list_filter = ('role', 'payment_type', 'is_active')
     search_fields = ('user__username', 'business__name')
+    raw_id_fields = ('user', 'business')

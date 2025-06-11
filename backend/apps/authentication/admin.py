@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Role
+from .models import CustomUser, Role
 from django.utils.translation import gettext_lazy as _
 
-@admin.register(User)
+@admin.register(CustomUser)
 class UserAdmin(BaseUserAdmin):
-    """تنظیمات نمایش مدل User در پنل ادمین"""
+    """تنظیمات نمایش مدل CustomUser در پنل ادمین"""
     list_display = ('username', 'email', 'first_name', 'last_name', 'current_role', 'is_active', 'is_staff')
     search_fields = ('username', 'email', 'first_name', 'last_name')
     list_filter = ('is_active', 'is_staff', 'current_role')

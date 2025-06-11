@@ -3,7 +3,6 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
 from .models import Order, OrderItem
-from apps.authentication.models import User
 from apps.designs.models import Design
 from apps.templates_app.models import UserTemplate
 import uuid

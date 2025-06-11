@@ -39,11 +39,10 @@ class OrderItemAdmin(admin.ModelAdmin):
 
 @admin.register(PrintProcess)
 class PrintProcessAdmin(admin.ModelAdmin):
-    list_display = ['id', 'process_type', 'business', 'status', 'created_at']
-    list_filter = ['status', 'process_type', 'created_at']
-    search_fields = ['business__name', 'process_type']
-    readonly_fields = ['created_at', 'updated_at']
-    list_editable = ['status']
+    list_display = ('order', 'stage', 'business_responsible', 'status')
+    list_filter = ('stage', 'status')
+    search_fields = ('order__id', 'stage')
+    raw_id_fields = ('order', 'business_responsible')
 
 @admin.register(OrderAssignment)
 class OrderAssignmentAdmin(admin.ModelAdmin):

@@ -5,7 +5,9 @@ from django.utils import timezone
 from datetime import timedelta, datetime
 import pandas as pd
 from apps.core.utils import to_jalali
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def generate_sales_report(business=None, start_date=None, end_date=None):
     """

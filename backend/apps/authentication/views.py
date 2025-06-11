@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework import status
-from .models import User, Role
+from .models import CustomUser, Role
 from .serializers import UserSerializer, RoleSerializer, LoginSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from apps.core.utils import log_error
@@ -54,7 +54,7 @@ class UserListCreateView(APIView):
 
     def get(self, request):
         try:
-            users = User.objects.all()
+            users = CustomUser.objects.all()
             serializer = UserSerializer(users, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -78,13 +78,13 @@ class UserDetailView(APIView):
 
     def get(self, request, user_id):
         try:
-            user = User.objects.get(id=user_id)
+            user = CustomUser.objects.get(id=user_id)
             # فقط خود کاربر یا ادمین می‌تواند جزئیات را ببیند
             if request.user != user and not request.user.is_staff:
                 return Response({'error': 'دسترسی غیرمجاز'}, status=status.HTTP_403_FORBIDDEN)
             serializer = UserSerializer(user)
             return Response(serializer.data)
-        except User.DoesNotExist:
+        except CustomUser.DoesNotExist:
             return Response({'error': 'کاربر یافت نشد'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             log_error("Error retrieving user", e)
@@ -92,7 +92,7 @@ class UserDetailView(APIView):
 
     def put(self, request, user_id):
         try:
-            user = User.objects.get(id=user_id)
+            user = CustomUser.objects.get(id=user_id)
             # فقط خود کاربر یا ادمین می‌تواند ویرایش کند
             if request.user != user and not request.user.is_staff:
                 return Response({'error': 'دسترسی غیرمجاز'}, status=status.HTTP_403_FORBIDDEN)
@@ -101,7 +101,7 @@ class UserDetailView(APIView):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except User.DoesNotExist:
+        except CustomUser.DoesNotExist:
             return Response({'error': 'کاربر یافت نشد'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             log_error("Error updating user", e)
@@ -112,10 +112,10 @@ class UserDetailView(APIView):
             # فقط ادمین می‌تواند کاربر را حذف کند
             if not request.user.is_staff:
                 return Response({'error': 'دسترسی غیرمجاز'}, status=status.HTTP_403_FORBIDDEN)
-            user = User.objects.get(id=user_id)
+            user = CustomUser.objects.get(id=user_id)
             user.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except User.DoesNotExist:
+        except CustomUser.DoesNotExist:
             return Response({'error': 'کاربر یافت نشد'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             log_error("Error deleting user", e)

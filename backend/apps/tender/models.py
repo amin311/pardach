@@ -1,10 +1,12 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 from apps.core.models import BaseModel
-from apps.authentication.models import User
 from apps.business.models import Business
 from apps.designs.models import Design
 from django.core.validators import MinValueValidator
+
+User = get_user_model()
 
 class Tender(BaseModel):
     """مدل مناقصه برای درخواست طراحی یا چاپ"""

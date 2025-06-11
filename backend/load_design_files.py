@@ -5,13 +5,14 @@ from django.core.files import File
 from django.utils.text import slugify
 from pathlib import Path
 import random
+from django.contrib.auth import get_user_model
 
 # تنظیم محیط جنگو
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend_project.settings')
 django.setup()
 
 from apps.designs.models import Design, DesignCategory
-from apps.authentication.models import User
+User = get_user_model()
 from apps.business.models import Business
 from decimal import Decimal
 

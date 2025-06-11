@@ -115,14 +115,13 @@ class Design(BaseModel):
 
     title = models.CharField(max_length=255, verbose_name=_("عنوان طرح"))
     description = models.TextField(blank=True, verbose_name=_("توضیحات"))
-    designer = models.ForeignKey(User, on_delete=models.CASCADE, 
-                               related_name='designs', verbose_name=_("طراح"))
+    designer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='designs', verbose_name=_("طراح"))
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,
-                                 related_name='created_designs', verbose_name=_("ایجاد کننده"))
+                                   related_name='created_designs', verbose_name=_("ایجاد کننده"))
     
     # فیلد تعیین نوع طرح (وکتور، عکس یا ترکیبی)
     design_type = models.CharField(max_length=20, choices=TYPE_CHOICES,
-                                 default='vector', verbose_name=_("نوع طرح"))
+                                   default='vector', verbose_name=_("نوع طرح"))
     
     # فیلد فایل وکتور (برای طرح‌های وکتوری)
     vector_file = models.FileField(
@@ -140,7 +139,6 @@ class Design(BaseModel):
     # فیلد فایل مخصوص دستگاه لیزر
     laser_file = models.FileField(
         upload_to='designs/laser/',
-        validators=[FileExtensionValidator(allowed_extensions=['dxf', 'ai', 'eps'])],
         verbose_name=_("فایل مخصوص لیزر"),
         blank=True, null=True
     )
@@ -150,19 +148,16 @@ class Design(BaseModel):
     height = models.PositiveIntegerField(null=True, blank=True, verbose_name=_("ارتفاع (پیکسل)"))
     
     # ارتباطات
-    categories = models.ManyToManyField(DesignCategory, related_name='designs', 
-                                      verbose_name=_("دسته‌بندی‌ها"))
-    tags = models.ManyToManyField(Tag, related_name='designs', 
-                                verbose_name=_("برچسب‌ها"))
+    categories = models.ManyToManyField('DesignCategory', related_name='designs', verbose_name=_("دسته‌بندی‌ها"))
+    tags = models.ManyToManyField('Tag', related_name='designs', verbose_name=_("برچسب‌ها"))
     similar_designs = models.ManyToManyField('self', blank=True, symmetrical=False,
                                            related_name='related_designs',
                                            verbose_name=_("طرح‌های مشابه"))
     
     # وضعیت و آمار
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', 
-                            verbose_name=_("وضعیت"))
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name=_("وضعیت"))
     is_public = models.BooleanField(default=False, verbose_name=_("عمومی"))
-    price = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("قیمت (ریال)"))
+    price = models.DecimalField(max_digits=12, decimal_places=0, verbose_name=_("قیمت (ریال)"))
     views_count = models.PositiveIntegerField(default=0, verbose_name=_("تعداد بازدید"))
     downloads_count = models.PositiveIntegerField(default=0, verbose_name=_("تعداد دانلود"))
 

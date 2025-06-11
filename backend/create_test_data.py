@@ -6,13 +6,13 @@ from django.utils import timezone
 from datetime import timedelta
 import sys
 import traceback
+from django.contrib.auth import get_user_model
 
 # تنظیم محیط جنگو
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend_project.settings')
 django.setup()
 
 # استفاده از مدل‌های پروژه
-from apps.authentication.models import User
 from apps.business.models import Business, BusinessUser
 from apps.designs.models import Design, DesignCategory
 from apps.orders.models import Order, OrderItem

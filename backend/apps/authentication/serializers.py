@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import Permission
-from .models import User, Role
+from .models import CustomUser, Role
 
 class UserSerializer(serializers.ModelSerializer):
     """سریالایزر برای مدل کاربر با امکان ایجاد و ویرایش"""
@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 
                  'current_role', 'roles', 'role_ids', 'is_active', 'is_staff', 
                  'password', 'created_at', 'updated_at']
@@ -27,7 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
         """ایجاد کاربر جدید با رمز عبور هش شده"""
         password = validated_data.pop('password', None)
         roles = validated_data.pop('roles', [])
-        user = User(**validated_data)
+        user = CustomUser(**validated_data)
         if password:
             user.set_password(password)
         user.save()

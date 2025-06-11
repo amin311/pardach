@@ -2,7 +2,6 @@ import pytest
 from django.test import TestCase
 from rest_framework.test import APIClient
 from .models import Tag, DesignCategory, Family, Design, FamilyDesignRequirement, DesignFamily
-from apps.authentication.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 import uuid
@@ -37,11 +36,9 @@ def test_family_model():
 @pytest.mark.django_db
 def test_design_model():
     """تست مدل طرح"""
-    user = User.objects.create_user(username='testuser', email='test@example.com', password='testpass')
     design = Design.objects.create(
         title='طرح تست',
         type='vector',
-        created_by=user
     )
     
     assert str(design) == 'طرح تست'

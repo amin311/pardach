@@ -1,10 +1,13 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
 from apps.core.models import BaseModel
 from django.conf import settings
 from apps.orders.models import Order
 import uuid
 import jdatetime
+
+User = get_user_model()
 
 class Payment(BaseModel):
     """مدل پرداخت برای ذخیره اطلاعات پرداخت‌های کاربران"""
@@ -23,7 +26,7 @@ class Payment(BaseModel):
     )
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
+        User, 
         on_delete=models.CASCADE, 
         related_name='payments', 
         verbose_name=_("کاربر")
@@ -152,7 +155,7 @@ class DesignerPayment(BaseModel):
         verbose_name=_("ست‌بندی مرتبط")
     )
     designer = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        User,
         on_delete=models.CASCADE,
         related_name="received_payments",
         verbose_name=_("ست‌بند/طراح")

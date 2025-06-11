@@ -3,8 +3,10 @@ from .models import Report, ReportCategory
 from apps.core.utils import to_jalali
 from apps.authentication.serializers import UserSerializer
 from apps.business.serializers import BusinessSerializer
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
 from apps.business.models import Business
+
+User = get_user_model()
 
 class ReportCategorySerializer(serializers.ModelSerializer):
     """سریالایزر برای مدل ReportCategory"""

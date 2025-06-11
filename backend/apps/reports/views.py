@@ -18,7 +18,6 @@ from datetime import datetime
 from django.utils import timezone
 from apps.notification.models import Notification
 from apps.business.models import Business
-from apps.authentication.models import User
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 

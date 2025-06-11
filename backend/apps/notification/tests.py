@@ -3,10 +3,12 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
 from apps.business.models import Business
 from .models import Notification, NotificationCategory
 import uuid
+
+User = get_user_model()
 
 @pytest.mark.django_db
 class NotificationModelTests(TestCase):

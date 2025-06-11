@@ -2,8 +2,10 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Notification
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
 from apps.core.utils import to_jalali
+
+User = get_user_model()
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     """کانزیومر برای مدیریت اعلانات بلادرنگ از طریق WebSocket"""

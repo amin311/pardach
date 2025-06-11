@@ -1,10 +1,12 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.core.models import BaseModel
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
 from apps.business.models import Business
 from apps.core.utils import log_error, to_jalali
 import uuid
+
+User = get_user_model()
 
 class NotificationCategory(BaseModel):
     """دسته‌بندی اعلانات"""
@@ -44,6 +46,8 @@ class Notification(BaseModel):
     link = models.CharField(max_length=255, blank=True, verbose_name=_("لینک مرتبط"))
     priority = models.PositiveIntegerField(default=1, verbose_name=_("اولویت"))
     all_users = models.BooleanField(default=False, verbose_name=_("برای همه کاربران"))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    read_at = models.DateTimeField(null=True, blank=True, verbose_name=_("تاریخ خواندن"))
 
     def save(self, *args, **kwargs):
         try:
@@ -54,6 +58,13 @@ class Notification(BaseModel):
 
     def __str__(self):
         return f"اعلان: {self.title} برای {self.user.username}"
+
+    def mark_as_read(self):
+        """علامت‌گذاری اعلان به عنوان خوانده شده"""
+        from django.utils import timezone
+        self.is_read = True
+        self.read_at = timezone.now()
+        self.save(update_fields=['is_read', 'read_at'])
 
     class Meta:
         verbose_name = _("اعلان")

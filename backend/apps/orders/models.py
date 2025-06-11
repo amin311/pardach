@@ -71,8 +71,6 @@ class Order(BaseModel):
         ('pending', _('در انتظار تأیید')),
         ('confirmed', _('تأیید شده')),
         ('in_progress', _('در حال انجام')),
-        ('set_design', _('در مرحله ست‌بندی')),
-        ('printing', _('در حال چاپ')),
         ('completed', _('تکمیل شده')),
         ('cancelled', _('لغو شده')),
         ('returned', _('مرجوع شده')),
@@ -103,11 +101,11 @@ class Order(BaseModel):
         ('digital', _('دیجیتال')),
         ('screen', _('سیلک اسکرین')),
         ('embroidery', _('گلدوزی')),
-        ('heat_transfer', _('انتقال حرارتی')),
+        ('heat_transfer', _('پرس حرارتی')),
     )
 
-    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name=_("مشتری"), null=True, blank=True)
-    business = models.ForeignKey('business.Business', on_delete=models.CASCADE, related_name='orders', verbose_name=_("کسب‌وکار"), null=True, blank=True)
+    customer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name=_("مشتری"))
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name='orders', verbose_name=_("کسب‌وکار"))
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name=_("وضعیت"))
     
     # اندازه لباس (عرض و ارتفاع)
@@ -117,20 +115,20 @@ class Order(BaseModel):
     custom_size_details = models.JSONField(null=True, blank=True, verbose_name=_("جزئیات سایز سفارشی"))
     
     # نوع پارچه، رنگ و سایر مشخصات
-    fabric_type = models.CharField(max_length=20, choices=FABRIC_TYPE_CHOICES, verbose_name=_("نوع پارچه"), null=True, blank=True)
-    fabric_color = models.CharField(max_length=50, verbose_name=_("رنگ پارچه"), null=True, blank=True)
-    fabric_material = models.CharField(max_length=50, verbose_name=_("جنس پارچه"), null=True, blank=True)
-    fabric_weight = models.PositiveIntegerField(help_text=_("گرم بر متر مربع"), verbose_name=_("وزن پارچه"), null=True, blank=True)
+    fabric_type = models.CharField(max_length=50, blank=True, verbose_name=_("نوع پارچه"))
+    fabric_color = models.CharField(max_length=50, blank=True, verbose_name=_("رنگ پارچه"))
+    fabric_material = models.CharField(max_length=50, blank=True, verbose_name=_("جنس پارچه"))
+    fabric_weight = models.PositiveIntegerField(null=True, blank=True, help_text=_("گرم بر متر مربع"), verbose_name=_("وزن پارچه"))
     fabric_details = models.TextField(blank=True, verbose_name=_("توضیحات اضافی پارچه"))
     
     # گزینه‌های چاپ
-    print_option = models.CharField(max_length=15, choices=PRINT_TYPE_CHOICES, default='manual', verbose_name=_("گزینه چاپ"), null=True, blank=True)
+    print_option = models.CharField(max_length=15, choices=PRINT_TYPE_CHOICES, default='manual', verbose_name=_("گزینه چاپ"))
     
     total_price = models.DecimalField(max_digits=12, decimal_places=0, verbose_name=_("قیمت کل (ریال)"), null=True, blank=True)
     deposit_amount = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("مبلغ پیش‌پرداخت (ریال)"))
     is_paid = models.BooleanField(default=False, verbose_name=_("پرداخت شده"))
     
-    delivery_date = models.DateField(verbose_name=_("تاریخ تحویل"), null=True, blank=True)
+    delivery_date = models.DateField(null=True, blank=True, verbose_name=_("تاریخ تحویل"))
     completed_at = models.DateTimeField(null=True, blank=True, verbose_name=_("زمان تکمیل"))
     
     customer_notes = models.TextField(blank=True, verbose_name=_("یادداشت‌های مشتری"))
@@ -351,40 +349,31 @@ class OrderDetail(models.Model):
         verbose_name = _("جزئیات سفارش")
         verbose_name_plural = _("جزئیات سفارش‌ها")
 
-class PrintProcess(BaseModel):
-    """مدل مراحل چاپ"""
-    PROCESS_TYPE_CHOICES = (
+class PrintProcess(models.Model):
+    """مدل برای مدیریت مراحل چاپ سفارش"""
+    STAGE_CHOICES = [
         ('design', _('طراحی')),
-        ('print', _('چاپ')),
-        ('laser', _('لیزر')),
-        ('embroidery', _('گلدوزی')),
+        ('prepress', _('پیش‌چاپ')),
+        ('printing', _('چاپ')),
+        ('postpress', _('پس‌چاپ')),
+        ('quality_control', _('کنترل کیفیت')),
         ('packaging', _('بسته‌بندی')),
-        ('delivery', _('ارسال')),
-    )
-
-    STATUS_CHOICES = (
+    ]
+    
+    STATUS_CHOICES = [
         ('pending', _('در انتظار')),
         ('in_progress', _('در حال انجام')),
         ('completed', _('تکمیل شده')),
-        ('failed', _('ناموفق')),
         ('cancelled', _('لغو شده')),
-    )
+    ]
 
-    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name='print_processes', verbose_name=_("سفارش"), null=True, blank=True)
-    process_type = models.CharField(max_length=50, choices=PROCESS_TYPE_CHOICES, verbose_name=_("نوع فرآیند"))
-    business = models.ForeignKey('business.Business', on_delete=models.CASCADE, related_name='print_processes', verbose_name=_("کسب‌وکار"))
-    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_processes', verbose_name=_("واگذار شده به"))
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='pending', verbose_name=_("وضعیت"))
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='print_processes', verbose_name=_("سفارش"), null=True, blank=True)
+    stage = models.CharField(max_length=50, choices=STAGE_CHOICES, default='design', verbose_name=_("مرحله"), null=True, blank=True)
+    business_responsible = models.ForeignKey('business.Business', on_delete=models.SET_NULL, null=True, related_name='print_processes', verbose_name=_("مجری مسئول"))
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name=_("وضعیت"))
     notes = models.TextField(blank=True, verbose_name=_("یادداشت‌ها"))
-    output_file = models.FileField(upload_to='process_outputs/', blank=True, null=True, verbose_name=_("فایل خروجی"))
-    quality_check = models.BooleanField(default=False, verbose_name=_("بازرسی کیفیت"))
-    quality_check_notes = models.TextField(blank=True, verbose_name=_("یادداشت‌های بازرسی"))
-    cost = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name=_("هزینه"))
-    is_urgent = models.BooleanField(default=False, verbose_name=_("فوری"))
-    order_number = models.PositiveIntegerField(default=0, verbose_name=_("شماره ترتیب"))
-
-    def __str__(self):
-        return f"{self.get_process_type_display()} برای سفارش {self.order.id}"
+    created_at = models.DateTimeField(default=timezone.now, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(default=timezone.now, verbose_name=_("تاریخ بروزرسانی"))
 
     class Meta:
         verbose_name = _("فرآیند چاپ")
@@ -392,11 +381,14 @@ class PrintProcess(BaseModel):
         ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
-        if self.status == 'in_progress' and not self.created_at:
+        if not self.id:  # اگر رکورد جدید است
             self.created_at = timezone.now()
-        elif self.status in ['completed', 'failed', 'cancelled'] and not self.updated_at:
-            self.updated_at = timezone.now()
+        self.updated_at = timezone.now()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        stage_display = self.get_stage_display() if self.stage else 'بدون مرحله'
+        return f"{stage_display} - {self.order if self.order else 'بدون سفارش'}"
 
 class OrderAssignment(models.Model):
     """تکلیف سفارش به کسب‌وکارها"""
