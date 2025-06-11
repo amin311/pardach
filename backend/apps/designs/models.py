@@ -6,7 +6,6 @@ from django.contrib.auth import get_user_model
 from apps.core.utils import log_error, to_jalali
 from django.utils import timezone
 from django.db.models import SET_NULL
-from apps.print_locations.models import PrintLocation
 from django.core.validators import FileExtensionValidator
 
 User = get_user_model()
