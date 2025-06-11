@@ -60,14 +60,14 @@ class OrderModelTest(TestCase):
             order=order,
             design=design,
             quantity=2,
-            price=2000
+            unit_price=1000
         )
         
         OrderItem.objects.create(
             order=order,
             design=design,
             quantity=1,
-            price=1000
+            unit_price=1000
         )
         
         total = order.calculate_total_price()
@@ -108,7 +108,7 @@ class OrderAPITest(TestCase):
             order=self.order,
             design=self.design,
             quantity=2,
-            price=2000
+            unit_price=1000
         )
         
     def test_list_orders(self):

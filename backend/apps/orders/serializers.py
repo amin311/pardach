@@ -17,8 +17,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'order', 'design', 'design_id', 'user_template', 'user_template_id', 'quantity', 'price', 'created_at', 'updated_at']
-        read_only_fields = ['price']
+        fields = [
+            'id', 'order', 'design', 'design_id', 'user_template',
+            'user_template_id', 'quantity', 'unit_price',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['unit_price']
 
     def get_created_at(self, obj):
         return to_jalali(obj.created_at)
