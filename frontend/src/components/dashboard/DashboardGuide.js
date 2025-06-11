@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../../lib/axios';
 import { FaLightbulb, FaArrowRight, FaTimes, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 /**

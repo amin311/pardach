@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../../lib/axios';
 import { toast } from 'react-toastify';
 import NotificationWidget from './NotificationWidget';
 
