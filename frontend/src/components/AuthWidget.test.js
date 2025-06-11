@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AuthWidget from './AuthWidget';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 
 // Mock مورد نیاز

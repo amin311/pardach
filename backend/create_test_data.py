@@ -14,9 +14,8 @@ django.setup()
 
 # استفاده از مدل‌های پروژه
 from apps.business.models import Business, BusinessUser
-from apps.designs.models import Design, DesignCategory
+from apps.designs.models import Design, DesignCategory, PrintLocation
 from apps.orders.models import Order, OrderItem
-from apps.print_locations.models import PrintLocation
 from django.contrib.auth.models import Group
 
 def create_test_data():

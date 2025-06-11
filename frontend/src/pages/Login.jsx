@@ -5,7 +5,7 @@ import {
   Alert, InputAdornment, IconButton 
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import axios from '../lib/axios';
+import axios from '../api/axiosInstance';
 
 const Login = () => {
   const navigate = useNavigate();

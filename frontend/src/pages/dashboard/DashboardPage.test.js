@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../../api/axiosInstance';
 import DashboardPage from './DashboardPage';
 import { toast } from 'react-toastify';
 

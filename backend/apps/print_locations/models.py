@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from apps.core.models import BaseModel
 
-class PrintLocation(BaseModel):
+class PrintCenter(BaseModel):
     """مدل مکان‌های چاپ و تحویل"""
     name = models.CharField(max_length=100, verbose_name=_("نام مکان"))
     address = models.TextField(blank=True, null=True, verbose_name=_("آدرس"))

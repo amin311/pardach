@@ -1,13 +1,15 @@
 from rest_framework import serializers
-from .models import PrintLocation
+from .models import PrintCenter
 
-class PrintLocationSerializer(serializers.ModelSerializer):
+class PrintCenterSerializer(serializers.ModelSerializer):
     """سریالایزر برای مدل مکان چاپ"""
-    
+
     class Meta:
-        model = PrintLocation
-        fields = ['id', 'name', 'address', 'city', 'phone', 'opening_hours', 
-                 'is_active', 'latitude', 'longitude', 'contact_person', 'email']
+        model = PrintCenter
+        fields = [
+            'id', 'name', 'address', 'city', 'phone', 'opening_hours',
+            'is_active', 'latitude', 'longitude', 'contact_person', 'email'
+        ]
         read_only_fields = ['id']
 
     def validate_phone(self, value):
@@ -20,4 +22,4 @@ class PrintLocationSerializer(serializers.ModelSerializer):
         """اعتبارسنجی ایمیل"""
         if value and '@' not in value:
             raise serializers.ValidationError('ایمیل معتبر وارد کنید')
-        return value 
+        return value

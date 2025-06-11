@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';

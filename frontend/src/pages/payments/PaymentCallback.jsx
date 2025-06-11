@@ -8,7 +8,7 @@ import {
   FaCheckCircle, FaTimesCircle, FaExclamationTriangle, 
   FaArrowLeft, FaHome, FaShoppingCart, FaMoneyBill
 } from 'react-icons/fa';
-import axiosInstance from '../../lib/axios';
+import axiosInstance from '../../api/axiosInstance';
 
 const PaymentCallback = () => {
   const [loading, setLoading] = useState(true);

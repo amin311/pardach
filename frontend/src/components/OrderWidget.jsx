@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../api/axiosInstance';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Slider from 'react-slick';

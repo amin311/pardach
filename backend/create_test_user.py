@@ -13,7 +13,7 @@ django.setup()
 from django.contrib.auth import get_user_model
 from apps.authentication.models import Role
 from apps.business.models import Business
-from apps.print_locations.models import PrintLocation
+from apps.print_locations.models import PrintCenter
 
 User = get_user_model()
 
@@ -96,7 +96,7 @@ def create_test_data():
     ]
     
     for location_data in locations_data:
-        location, created = PrintLocation.objects.get_or_create(
+        location, created = PrintCenter.objects.get_or_create(
             name=location_data['name'],
             defaults=location_data
         )

@@ -1,13 +1,13 @@
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework import status
-from .models import PrintLocation
-from .serializers import PrintLocationSerializer
+from .models import PrintCenter
+from .serializers import PrintCenterSerializer
 
-class PrintLocationListCreateView(generics.ListCreateAPIView):
+class PrintCenterListCreateView(generics.ListCreateAPIView):
     """API برای لیست و ایجاد مکان‌های چاپ"""
-    queryset = PrintLocation.objects.filter(is_active=True)
-    serializer_class = PrintLocationSerializer
+    queryset = PrintCenter.objects.filter(is_active=True)
+    serializer_class = PrintCenterSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
@@ -18,10 +18,10 @@ class PrintLocationListCreateView(generics.ListCreateAPIView):
             queryset = queryset.filter(city__icontains=city)
         return queryset
 
-class PrintLocationDetailView(generics.RetrieveUpdateDestroyAPIView):
+class PrintCenterDetailView(generics.RetrieveUpdateDestroyAPIView):
     """API برای مشاهده، ویرایش و حذف مکان چاپ"""
-    queryset = PrintLocation.objects.all()
-    serializer_class = PrintLocationSerializer
+    queryset = PrintCenter.objects.all()
+    serializer_class = PrintCenterSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def destroy(self, request, *args, **kwargs):
@@ -29,4 +29,4 @@ class PrintLocationDetailView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         instance.is_active = False
         instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT) 
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 
 // کامپوننت‌های داشبورد

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 
