@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     'apps.tender',
     'apps.set_design',
     'apps.print_locations',
+    'apps.clothing',
+    'apps.plugins',
 ]
 
 MIDDLEWARE = [

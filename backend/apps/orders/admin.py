@@ -27,14 +27,13 @@ class OrderDetailAdmin(admin.ModelAdmin):
     list_filter = ['size', 'fabric', 'print_type']
     search_fields = ['order__id', 'template__name']
     readonly_fields = ['total_price']
-    inlines = [OrderItemInline]
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     """کلاس برای مدیریت آیتم‌های سفارش در پنل ادمین"""
-    list_display = ['order_detail', 'design', 'print_location', 'total_price']
-    list_filter = ['print_location']
-    search_fields = ['order_detail__order__id', 'design__title']
+    list_display = ['order', 'section', 'design', 'rakeb_orientation', 'total_price']
+    list_filter = ['section', 'rakeb_orientation']
+    search_fields = ['order__id', 'design__title']
     readonly_fields = ['total_price']
 
 @admin.register(PrintProcess)

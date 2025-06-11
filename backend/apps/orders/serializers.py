@@ -8,6 +8,7 @@ from apps.templates_app.serializers import UserTemplateSerializer
 from apps.business.serializers import BusinessSerializer
 from django.utils.translation import gettext_lazy as _
 from django.db import transaction
+from apps.clothing.models import ClothingSection
 
 class OrderItemSerializer(serializers.ModelSerializer):
     """سریالایزر برای آیتم‌های سفارش"""
@@ -17,10 +18,11 @@ class OrderItemSerializer(serializers.ModelSerializer):
     user_template_id = serializers.PrimaryKeyRelatedField(source='user_template', queryset=UserTemplate.objects.all(), required=False, allow_null=True, write_only=True)
     created_at = serializers.SerializerMethodField()
     updated_at = serializers.SerializerMethodField()
+    section = serializers.PrimaryKeyRelatedField(queryset=ClothingSection.objects.all())
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'order', 'design', 'design_id', 'user_template', 'user_template_id', 'quantity', 'price', 'created_at', 'updated_at']
+        fields = ['id', 'order', 'design', 'design_id', 'user_template', 'user_template_id', 'quantity', 'price', 'created_at', 'updated_at', 'section', 'rakeb_orientation']
         read_only_fields = ['price']
 
     def get_created_at(self, obj):
@@ -103,7 +105,7 @@ class OrderSerializer(serializers.ModelSerializer):
     # workshop_name = serializers.CharField(source='workshop.name', read_only=True)
     
     # Nested serializers
-    items = OrderItemSerializer(many=True, read_only=True)
+    items = OrderItemSerializer(many=True)
     sections = OrderSectionSerializer(many=True, required=False)
     garment_details = GarmentDetailsSerializer(required=False)
     stages = OrderStageSerializer(many=True, read_only=True)
@@ -155,17 +157,22 @@ class OrderSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         """ایجاد سفارش با بخش‌ها و جزئیات"""
-        sections_data = validated_data.pop('sections', [])
-        garment_details_data = validated_data.pop('garment_details', None)
-        
-        # ایجاد سفارش
-        order = Order.objects.create(**validated_data)
+        items_data = validated_data.pop("items", [])
+        request = self.context.get("request")
+        order = Order(**validated_data)
+        if request:
+            order._request_user = request.user
+        order.save()
+        for item in items_data:
+            OrderItem.objects.create(order=order, **item)
         
         # ایجاد بخش‌ها
+        sections_data = validated_data.pop('sections', [])
         for section_data in sections_data:
             OrderSection.objects.create(order=order, **section_data)
         
         # ایجاد جزئیات لباس
+        garment_details_data = validated_data.pop('garment_details', None)
         if garment_details_data:
             GarmentDetails.objects.create(order=order, **garment_details_data)
         

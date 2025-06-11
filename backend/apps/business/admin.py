@@ -4,8 +4,8 @@ from .models import Business, EmployeeRole
 
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
-    list_display = ('name', 'type', 'owner')
-    list_filter = ('type',)
+    list_display = ('name', 'business_type', 'owner')
+    list_filter = ('business_type',)
     search_fields = ('name', 'owner__username')
     raw_id_fields = ('owner',)
 

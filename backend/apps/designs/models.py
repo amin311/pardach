@@ -90,7 +90,7 @@ class Family(models.Model):
         verbose_name_plural = _("خانواده‌ها")
         ordering = ['-created_at']
 
-class Design(BaseModel):
+class Design(ThumbnailMixin):
     """مدل طرح‌های گرافیکی"""
     STATUS_CHOICES = (
         ('draft', _('پیش‌نویس')),
@@ -161,6 +161,18 @@ class Design(BaseModel):
     views_count = models.PositiveIntegerField(default=0, verbose_name=_("تعداد بازدید"))
     downloads_count = models.PositiveIntegerField(default=0, verbose_name=_("تعداد دانلود"))
 
+    # فایل های اصلی
+    svg_file = models.FileField(upload_to='designs/svg/', verbose_name=_("فایل وکتور"), blank=True, null=True)
+    raster_file = models.ImageField(upload_to='designs/raster/', verbose_name=_("فایل تصویری"), blank=True, null=True)
+
+    # تصاویر خروجی برای وب
+    product_image = models.ImageField(upload_to='designs/images/', verbose_name=_("تصویر محصول"), blank=True, null=True)
+    thumbnail = models.ImageField(upload_to='designs/thumbnails/', verbose_name=_("تصویر بندانگشتی"), blank=True, null=True, editable=False)
+
+    # timestamps
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("تاریخ ایجاد"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("آخرین بروزرسانی"))
+
     def __str__(self):
         return self.title
 
@@ -170,24 +182,19 @@ class Design(BaseModel):
         ordering = ['-created_at']
 
     def save(self, *args, **kwargs):
-        # بهینه‌سازی خودکار تصاویر
-        if self.image_file:
-            try:
-                from PIL import Image
-                from io import BytesIO
-                from django.core.files import File
-
-                img = Image.open(self.image_file)
-                if img.size[0] > 800:
-                    img.thumbnail((800, 800))
-                    img_io = BytesIO()
-                    img.save(img_io, 'JPEG', quality=85)
-                    img_io.seek(0)
-                    self.image_file = File(img_io, name=self.image_file.name)
-            except Exception as e:
-                from apps.core.utils import log_error
-                log_error("Error optimizing image", e)
         super().save(*args, **kwargs)
+        if self.product_image and not self.thumbnail:
+            from PIL import Image
+            from io import BytesIO
+            from django.core.files.base import ContentFile
+
+            img = Image.open(self.product_image.path)
+            img.thumbnail((300, 300))
+            buffer = BytesIO()
+            img.save(buffer, format='JPEG', quality=85)
+            thumb_name = f"{self.pk}_thumb.jpg"
+            self.thumbnail.save(thumb_name, ContentFile(buffer.getvalue()), save=False)
+            super().save(update_fields=['thumbnail'])
 
 class FamilyDesignRequirement(models.Model):
     family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name='design_requirements', verbose_name=_("خانواده"))

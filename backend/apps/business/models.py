@@ -9,17 +9,22 @@ User = get_user_model()
 
 class Business(models.Model):
     """مدل کسب‌وکار"""
+    PRINT = "print"
+    LASER = "laser"
+    SET_DESIGN = "set_design"
+    DELIVERY = "delivery"
+
+    BUSINESS_TYPE_CHOICES = (
+        (PRINT, _("چاپ")),
+        (LASER, _("حکاکی لیزری")),
+        (SET_DESIGN, _("ست‌بندی")),
+        (DELIVERY, _("تحویل")),
+    )
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE,
                               related_name='owned_businesses', verbose_name=_("مالک"))
     name = models.CharField(max_length=255, verbose_name=_("نام کسب‌وکار"))
-    type = models.CharField(max_length=50, verbose_name=_("نوع کسب‌وکار"),
-                            choices=[
-                                ('manual_print', _("چاپ دستی")),
-                                ('digital_print', _("چاپ دیجیتال")),
-                                ('laser', _("حکاکی لیزری")),
-                                ('delivery', _("تحویل‌گیرنده")),
-                                ('set_design', _("ست‌بندی")),
-                            ], blank=True, null=True)
+    business_type = models.CharField(max_length=20, choices=BUSINESS_TYPE_CHOICES, default=PRINT, verbose_name=_("نوع کسب‌وکار"))
     services = models.JSONField(blank=True, null=True, verbose_name=_("خدمات"))
     # کارمندان/نقش‌های اختصاص‌یافته به این کسب‌وکار
     employees = models.ManyToManyField(User, through='EmployeeRole',

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'apps.workshop',
     'apps.settings',
     'apps.dashboard',
+    'apps.clothing',
+    'apps.plugins',
 ]
 
 MIDDLEWARE = [

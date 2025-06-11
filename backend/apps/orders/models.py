@@ -11,17 +11,20 @@ from apps.core.utils import log_error, to_jalali
 from django.db.models import SET_NULL
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from apps.clothing.models import ClothingSection, RakebOrientation
 
 User = get_user_model()
 
 class OrderItem(models.Model):
     """آیتم‌های سفارش شامل طرح‌ها و محل‌های چاپ"""
-    order_detail = models.ForeignKey('OrderDetail', on_delete=models.CASCADE, related_name='items', verbose_name=_("جزئیات سفارش"), null=True, blank=True)
-    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name='order_items', verbose_name=_("طرح"), null=True, blank=True)
-    print_location = models.ForeignKey('print_locations.PrintLocation', on_delete=models.PROTECT, related_name='order_items', verbose_name=_("محل چاپ"), null=True, blank=True)
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, related_name="items", null=True, blank=True)
+    section = models.ForeignKey(ClothingSection, on_delete=models.PROTECT, related_name="order_items", verbose_name=_("بخش لباس"), null=True, blank=True)
+    design = models.ForeignKey(Design, on_delete=models.PROTECT, related_name="order_items", verbose_name=_("طرح"), null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1, verbose_name=_("تعداد"))
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True, blank=True, verbose_name=_("قیمت"))
+    rakeb_orientation = models.CharField(max_length=7, choices=RakebOrientation.choices, default=RakebOrientation.OUTSIDE, verbose_name=_("رکب"))
     
     # فیلدهای اضافه شده مجدد
-    quantity = models.PositiveIntegerField(verbose_name=_("تعداد"), null=True, blank=True)
     color_count = models.PositiveIntegerField(default=1, verbose_name=_("تعداد رنگ"))
     print_dimensions = models.CharField(max_length=100, verbose_name=_("ابعاد چاپ"), null=True, blank=True)
     
@@ -49,15 +52,13 @@ class OrderItem(models.Model):
         # محاسبه قیمت کل بر اساس تعداد
         if self.quantity and self.unit_price:
             self.total_price = self.unit_price * self.quantity
-        elif self.order_detail and self.unit_price:
-            self.total_price = self.unit_price * self.order_detail.quantity
+        elif self.order and self.unit_price:
+            self.total_price = self.unit_price * self.quantity
             
         super().save(*args, **kwargs)
 
     def __str__(self):
-        design_title = self.design.title if self.design else 'بدون طرح'
-        location_name = self.print_location.name if self.print_location else 'بدون محل چاپ'
-        return f"{design_title} - {location_name}"
+        return f"{self.order.code} – {self.design.name} ({self.quantity})"
 
     class Meta:
         verbose_name = _("آیتم سفارش")
@@ -167,6 +168,16 @@ class Order(BaseModel):
 
     def __str__(self):
         return f"سفارش {self.id} - {self.customer.get_full_name() if self.customer else 'بدون مشتری'}"
+
+    def save(self, *args, **kwargs):
+        # تعیین خودکار کسب‌وکار چاپ با توجه به نقش کاربری ایجادکننده (اگر خالی باشد)
+        if not self.business and hasattr(self, "_request_user"):
+            from business.models import BusinessUser
+            try:
+                self.business = BusinessUser.objects.get(user=self._request_user).business
+            except BusinessUser.DoesNotExist:
+                pass
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("سفارش")
