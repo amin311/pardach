@@ -155,22 +155,19 @@ def send_order_notifications(sender, instance, created, **kwargs):
             # اطلاعیه ایجاد سفارش به مشتری
             Notification.objects.create(
                 user=instance.customer,
+                type='order',
                 title="ثبت سفارش جدید",
-                message=f"سفارش شما با شماره {str(instance.id)[:8]} ثبت شد.",
-                notification_type='order_created',
-                data={'order_id': str(instance.id)}
+                content=f"سفارش شما با شماره {str(instance.id)[:8]} ثبت شد."
             )
             
-            # اطلاعیه به کسب‌وکار (در صورت وجود)
+            # اطلاعیه به مالک کسب‌وکار (در صورت وجود)
             if instance.business:
-                for business_user in instance.business.users.filter(roles__name='business_manager'):
-                    Notification.objects.create(
-                        user=business_user.user,
-                        title="سفارش جدید",
-                        message=f"سفارش جدید با شماره {str(instance.id)[:8]} دریافت شد.",
-                        notification_type='new_order_received',
-                        data={'order_id': str(instance.id)}
-                    )
+                Notification.objects.create(
+                    user=instance.business.owner,
+                    type='order',
+                    title="سفارش جدید",
+                    content=f"سفارش جدید با شماره {str(instance.id)[:8]} دریافت شد."
+                )
     
     except ImportError:
         # مدل Notification وجود ندارد
