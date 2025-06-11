@@ -34,6 +34,9 @@
    venv\Scripts\activate  # در ویندوز
    pip install -r requirements.txt
    ```
+   این دستور کتابخانه‌های مورد نیاز مانند
+   `djangorestframework-simplejwt`, `drf-spectacular`,
+   `django-cors-headers` و `channels` را نیز نصب می‌کند.
 
 2. اجرای مایگریشن‌ها:
    ```bash
