@@ -24,7 +24,7 @@ import {
   Badge,
 } from '@chakra-ui/react';
 import { FaCreditCard, FaExternalLinkAlt, FaCheckCircle } from 'react-icons/fa';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../api/axiosInstance';
 
 const PaymentButton = ({ 
   orderId, 

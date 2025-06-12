@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../../api/axiosInstance';
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { 

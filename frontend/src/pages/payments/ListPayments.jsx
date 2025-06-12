@@ -11,7 +11,7 @@ import {
   FaEye, FaEdit, FaTrash, FaFilter, FaMoneyBill, 
   FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaBan
 } from 'react-icons/fa';
-import axiosInstance from '../../lib/axios';
+import axiosInstance from '../../api/axiosInstance';
 import { useAuth } from '../../contexts/AuthContext';
 
 // تبدیل وضعیت پرداخت به رنگ و آیکون

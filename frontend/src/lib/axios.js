@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import axiosInstance from './lib/axios';
 
 // ایجاد instance اصلی axios
@@ -63,3 +64,8 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance; 
+=======
+import axios from 'axios';
+
+export default axios;
+>>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772

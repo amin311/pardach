@@ -201,6 +201,7 @@ class NotificationAPITests(TestCase):
         notification.refresh_from_db()
         self.assertTrue(notification.is_archived)
 
+<<<<<<< HEAD
 class OrderNotificationSignalTests(TestCase):
     """Tests for order status change notifications."""
 
@@ -232,3 +233,24 @@ class OrderNotificationSignalTests(TestCase):
         self.assertTrue(
             Notification.objects.filter(user=self.customer, type='order_status').exists()
         )
+=======
+@pytest.mark.django_db
+class NotificationSignalTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='signaluser', email='signal@example.com', password='pass1234'
+        )
+        self.business = Business.objects.create(
+            name='Signal Business', status='active', owner=self.user
+        )
+
+    def test_order_status_change_creates_notification(self):
+        order = Order.objects.create(customer=self.user, business=self.business)
+        # change status
+        order.status = 'confirmed'
+        order.save()
+        self.assertTrue(
+            Notification.objects.filter(user=self.user, type='order_status').exists()
+        )
+
+>>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772

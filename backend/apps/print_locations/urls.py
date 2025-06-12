@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import PrintLocationListCreateView, PrintLocationDetailView
+from .views import PrintCenterListCreateView, PrintCenterDetailView
 
 urlpatterns = [
-    path('', PrintLocationListCreateView.as_view(), name='print-location-list-create'),
-    path('<int:pk>/', PrintLocationDetailView.as_view(), name='print-location-detail'),
-] 
+    path('', PrintCenterListCreateView.as_view(), name='print-center-list-create'),
+    path('<int:pk>/', PrintCenterDetailView.as_view(), name='print-center-detail'),
+]

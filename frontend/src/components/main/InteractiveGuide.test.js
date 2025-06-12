@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../../api/axiosInstance';
 import InteractiveGuide from './InteractiveGuide';
 
 // ماک کردن ماژول axios

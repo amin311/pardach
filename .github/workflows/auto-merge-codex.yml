@@ -1,0 +1,44 @@
+name: Auto-merge Codex PRs
+
+# ۱. تنظیم Trigger
+on:
+  pull_request:
+    types: [opened, synchronize]   # وقتی PR جدید باز شود یا دوباره آپدیت شود
+    branches: [main]               # فقط PRهایی که به شاخهٔ main هستند
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest         # محیط اجرا: لینوکس اوبونتو
+
+    # ۲. شرط اجرا: فقط زمانی که PR توسط بات Codex ساخته شده باشد
+    if: github.actor == 'codex[bot]'
+
+    steps:
+      # ۳. چک‌آوت کردن کد مخزن
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ۴. خودکار approve کردن PR
+      - name: Auto-approve PR
+        uses: hmarr/auto-approve-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ۵. Merge کردن PR
+      - name: Merge Pull Request
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.pulls.merge({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              merge_method: "merge"   # یا "squash" / "rebase"
+            });
+
+      # ۶. (اختیاری) حذف شاخهٔ PR پس از Merge
+      - name: Delete branch
+        uses: peter-evans/delete-branch@v3
+        with:
+          branch: ${{ github.head_ref }}

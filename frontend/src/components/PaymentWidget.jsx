@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, Badge, VStack, Heading, Divider, Spinner, Flex, Icon } from '@chakra-ui/react';
 import { FaMoneyCheckAlt, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaBan } from 'react-icons/fa';
-import axiosInstance from './lib/axios';
+import axiosInstance from '../api/axiosInstance';
 import { toast } from 'react-toastify';
 
 // تبدیل وضعیت پرداخت به رنگ و آیکون

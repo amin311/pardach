@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import axiosInstance from '../lib/axios';
+=======
+import axiosInstance from '../api/axiosInstance';
+>>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
