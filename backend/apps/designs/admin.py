@@ -36,10 +36,13 @@ class DesignAdmin(admin.ModelAdmin):
             'fields': ('title', 'description', 'designer', 'status', 'is_public', 'price')
         }),
         ('فایل‌ها', {
-            'fields': ('file', 'preview_image')
+            'fields': ('design_type', 'vector_file', 'image_file', 'laser_file', 'product_image')
+        }),
+        ('ابعاد', {
+            'fields': ('width', 'height')
         }),
         ('دسته‌بندی', {
-            'fields': ('categories',)
+            'fields': ('categories', 'tags')
         }),
         ('آمار', {
             'fields': ('views_count', 'downloads_count')
