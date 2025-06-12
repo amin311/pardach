@@ -1,13 +1,13 @@
-import axiosInstance from './lib/axios';
+import axios from '../lib/axios';
 
 // تنظیمات پایه axios
-const axiosInstance = axiosInstance.create({
+const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
   timeout: 10000,
 });
 
 // Interceptor برای افزودن خودکار Authorization header
-axiosInstance.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
     if (token) {
@@ -21,7 +21,7 @@ axiosInstance.interceptors.request.use(
 );
 
 // Interceptor برای مدیریت خطاهای احراز هویت
-axiosInstance.interceptors.response.use(
+api.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -35,14 +35,14 @@ axiosInstance.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refresh_token');
         if (refreshToken) {
-          const response = await axiosInstance.post('/api/auth/token/refresh/', {
+          const response = await api.post('/api/auth/token/refresh/', {
             refresh: refreshToken,
           });
           
           localStorage.setItem('access_token', response.data.access);
           originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
           
-          return axiosInstance(originalRequest);
+          return api(originalRequest);
         }
       } catch (refreshError) {
         // اگر refresh token هم معتبر نباشد، کاربر را به صفحه لاگین هدایت کن
@@ -57,4 +57,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance; 
+export default api; 
