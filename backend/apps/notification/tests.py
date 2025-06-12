@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
 from apps.business.models import Business
+from apps.orders.models import Order
 from .models import Notification, NotificationCategory
 import uuid
 
@@ -22,7 +23,6 @@ class NotificationModelTests(TestCase):
         )
         self.business = Business.objects.create(
             name='کسب‌وکار تست',
-            status='active',
             owner=self.user
         )
         self.category = NotificationCategory.objects.create(
@@ -75,7 +75,6 @@ class NotificationAPITests(TestCase):
         )
         self.business = Business.objects.create(
             name='کسب‌وکار تست',
-            status='active',
             owner=self.user
         )
         self.category = NotificationCategory.objects.create(
@@ -201,3 +200,35 @@ class NotificationAPITests(TestCase):
         # بررسی اعمال تغییرات
         notification.refresh_from_db()
         self.assertTrue(notification.is_archived)
+
+class OrderNotificationSignalTests(TestCase):
+    """Tests for order status change notifications."""
+
+    def setUp(self):
+        self.customer = User.objects.create_user(
+            username='customer',
+            email='customer@example.com',
+            password='password123'
+        )
+        self.owner = User.objects.create_user(
+            username='owner',
+            email='owner@example.com',
+            password='ownerpass'
+        )
+        self.business = Business.objects.create(
+            name='کسب‌وکار تست',
+            owner=self.owner
+        )
+
+    def test_status_change_creates_notification(self):
+        order = Order.objects.create(
+            customer=self.customer,
+            business=self.business,
+            status='pending'
+        )
+        order.status = 'confirmed'
+        order.save()
+
+        self.assertTrue(
+            Notification.objects.filter(user=self.customer, type='order_status').exists()
+        )
