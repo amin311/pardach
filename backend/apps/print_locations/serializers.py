@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-from apps.designs.serializers import PrintLocationSerializer
-
-__all__ = ["PrintLocationSerializer"] 
-=======
 from rest_framework import serializers
 from .models import PrintCenter
 
@@ -28,4 +23,5 @@ class PrintCenterSerializer(serializers.ModelSerializer):
         if value and '@' not in value:
             raise serializers.ValidationError('ایمیل معتبر وارد کنید')
         return value
->>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772
+
+__all__ = ["PrintCenterSerializer"] 

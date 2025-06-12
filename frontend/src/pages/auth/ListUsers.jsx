@@ -24,7 +24,6 @@ const ListUsers = ({ userId, isAdmin }) => {
       setUsers(response.data);
     } catch (error) {
       toast.error('خطا در بارگذاری کاربران');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -39,7 +38,6 @@ const ListUsers = ({ userId, isAdmin }) => {
         toast.success('کاربر با موفقیت حذف شد');
       } catch (error) {
         toast.error('خطا در حذف کاربر');
-        console.error(error);
       }
     }
   };

@@ -26,8 +26,6 @@ const DetailNotification = ({ userId, isAdmin }) => {
       setNotification(response.data);
       setLoading(false);
     } catch (error) {
-      console.error('خطا در دریافت جزئیات اعلان:', error);
-      
       if (error.response && error.response.status === 404) {
         toast.error('اعلان مورد نظر یافت نشد');
         navigate('/notifications');

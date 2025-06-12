@@ -35,7 +35,7 @@ class MainPageSummaryView(APIView):
         try:
             # محدوده زمانی برای داده‌های اخیر
             days = int(request.query_params.get('days', 7))
-            end_date = datetime.now()
+            end_date = timezone.now()
             start_date = end_date - timedelta(days=days)
 
             # فیلتر براساس نقش کاربر
@@ -60,8 +60,8 @@ class MainPageSummaryView(APIView):
                 Q(user=request.user) | Q(all_users=True),
                 created_at__range=[start_date, end_date]
             )
-            recent_notifications = list(notifications_query[:5].values('id', 'title', 'message', 'read', 'link', 'created_at'))
-            unread_notifications = notifications_query.filter(read=False).count()
+            recent_notifications = list(notifications_query[:5].values('id', 'title', 'content', 'is_read', 'link', 'created_at'))
+            unread_notifications = notifications_query.filter(is_read=False).count()
 
             # خلاصه چت‌ها
             chats_query = Chat.objects.filter(participants=request.user, created_at__range=[start_date, end_date])
@@ -159,7 +159,7 @@ class MainSummaryView(APIView):
         try:
             # محدوده زمانی برای داده‌های اخیر
             days = int(request.query_params.get('days', 30))
-            end_date = datetime.now()
+            end_date = timezone.now()
             start_date = end_date - timedelta(days=days)
 
             # فیلتر براساس نقش کاربر

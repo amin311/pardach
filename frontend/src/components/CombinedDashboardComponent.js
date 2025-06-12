@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-<<<<<<< HEAD
-import axiosInstance from '../lib/axios';
-=======
 import axiosInstance from '../api/axiosInstance';
->>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772
 import { toast } from 'react-toastify';
 
 // کامپوننت‌های داشبورد

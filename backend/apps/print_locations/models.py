@@ -1,8 +1,7 @@
-from apps.designs.models import PrintLocation
+from django.db import models
+from django.utils.translation import gettext_lazy as _
+from apps.core.models import BaseModel
 
-<<<<<<< HEAD
-__all__ = ["PrintLocation"] 
-=======
 class PrintCenter(BaseModel):
     """مدل مکان‌های چاپ و تحویل"""
     name = models.CharField(max_length=100, verbose_name=_("نام مکان"))
@@ -25,5 +24,6 @@ class PrintCenter(BaseModel):
 
     def __str__(self):
         city_name = self.city or "نامشخص"
-        return f"{self.name} - {city_name}" 
->>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772
+        return f"{self.name} - {city_name}"
+
+__all__ = ["PrintCenter"]

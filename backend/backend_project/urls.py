@@ -45,6 +45,8 @@ urlpatterns = [
     path('api/tender/', include('apps.tender.urls')),
     path('api/set-design/', include('apps.set_design.urls')),
     path('api/print-locations/', include('apps.print_locations.urls')),
+    path('api/clothing/', include('apps.clothing.urls')),
+    path('api/plugins/', include('apps.plugins.urls')),
     path('api/', include('apps.api.urls')),
 ]
 

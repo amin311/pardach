@@ -1,5 +1,6 @@
 from django.utils import timezone
 from jdatetime import datetime as jdatetime
+from datetime import datetime
 from django.core.exceptions import ValidationError
 import logging
 from django.conf import settings
@@ -11,6 +12,10 @@ def to_jalali(date):
     if not date:
         return ''
     try:
+        # اگر date یک string است، آن را به datetime تبدیل کن
+        if isinstance(date, str):
+            date = datetime.fromisoformat(date.replace('Z', '+00:00'))
+        
         jalali_date = jdatetime.fromgregorian(datetime=date)
         return jalali_date.strftime('%Y/%m/%d %H:%M')
     except Exception as e:

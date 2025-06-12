@@ -48,6 +48,18 @@ class LoginView(APIView):
             log_error("Error logging in user", e)
             return Response({'error': 'خطا در ورود'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class CurrentUserView(APIView):
+    """API برای دریافت اطلاعات کاربر فعلی"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            serializer = UserSerializer(request.user)
+            return Response(serializer.data)
+        except Exception as e:
+            log_error("Error retrieving current user", e)
+            return Response({'error': 'خطا در دریافت اطلاعات کاربر'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class UserListCreateView(APIView):
     """API برای مشاهده لیست کاربران و ایجاد کاربر جدید (فقط ادمین)"""
     permission_classes = [IsAdminUser]

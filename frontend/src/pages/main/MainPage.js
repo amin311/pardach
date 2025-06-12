@@ -72,7 +72,6 @@ const MainPage = () => {
       setMainData(response.data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching main page data:', error);
       setError('خطا در بارگذاری اطلاعات صفحه اصلی');
       toast.error('خطا در بارگذاری اطلاعات صفحه اصلی');
       setLoading(false);

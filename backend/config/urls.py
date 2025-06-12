@@ -8,6 +8,7 @@ urlpatterns = [
     path('api/', include('apps.users.urls')),
     path('api/', include('apps.dashboard.urls')),
     path('api/', include('apps.notification.urls')),
+    path('api/main/', include('apps.main.urls')),
 ]
 
 # Add static and media URLs in development

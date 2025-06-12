@@ -28,6 +28,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']  # برای توسعه - در پروداکشن باید محدود شود
 
+# تنظیم اسلش پایانی
+APPEND_SLASH = True
+
 
 # Application definition
 

@@ -39,7 +39,6 @@ const EditBusiness = ({ userId, isAdmin }) => {
         
         setFetchLoading(false);
       } catch (error) {
-        console.error('Error fetching business data:', error);
         toast.error('خطا در دریافت اطلاعات کسب‌وکار');
         
         // در صورت خطا 404 یا 403 کاربر به صفحه لیست برگردانده شود

@@ -1,45 +1,44 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Container, Box, Paper, Typography, CssBaseline } from '@mui/material';
+import { Box, Container, Paper, Typography } from '@mui/material';
 
 const AuthLayout = () => {
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
         minHeight: '100vh',
-        bgcolor: '#f5f5f5',
-        direction: 'rtl',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        p: 2,
       }}
     >
-      <CssBaseline />
-      <Container maxWidth="sm" sx={{ mb: 4 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            mt: 8,
-          }}
-        >
-          <Typography component="h1" variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
-            سیستم مدیریت چاپخانه
-          </Typography>
-          <Paper
-            elevation={3}
+      <Container maxWidth="sm">
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography
+            variant="h3"
             sx={{
-              p: 4,
-              width: '100%',
-              borderRadius: 2,
+              color: 'white',
+              fontWeight: 'bold',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              mb: 1,
             }}
           >
-            <Outlet />
-          </Paper>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
-            © {new Date().getFullYear()} تمام حقوق محفوظ است.
+            سیستم پرداچ
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'rgba(255,255,255,0.9)',
+              textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+            }}
+          >
+            سیستم مدیریت تولید و چاپ
           </Typography>
         </Box>
+        
+        <Outlet />
       </Container>
     </Box>
   );

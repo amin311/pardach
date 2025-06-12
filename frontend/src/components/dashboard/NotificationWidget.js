@@ -19,7 +19,6 @@ const NotificationWidget = () => {
       } catch (err) {
         setError('خطا در بارگذاری اعلان‌ها');
         toast.error('خطا در بارگذاری اعلان‌ها');
-        console.error(err);
       } finally {
         setLoading(false);
       }

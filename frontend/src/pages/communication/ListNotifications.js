@@ -29,7 +29,6 @@ const ListNotifications = ({ userId, isAdmin }) => {
         setLoading(false);
       })
       .catch(err => {
-        console.error('Error fetching notifications:', err);
         toast.error('خطا در بارگذاری اعلانات');
         setLoading(false);
       });

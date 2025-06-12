@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-import axiosInstance from '../lib/axios';
-=======
 import axiosInstance from '../api/axiosInstance';
->>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772
 import { toast } from 'react-toastify';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';

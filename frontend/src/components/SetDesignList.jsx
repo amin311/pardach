@@ -29,7 +29,7 @@ const SetDesignList = () => {
       setSetDesigns(response.data);
       setError(null);
     } catch (err) {
-      console.error('Error fetching set designs:', err);
+      // console.error('Error fetching set designs:', err);
       setError('خطا در دریافت لیست ست‌بندی‌ها. لطفاً دوباره تلاش کنید.');
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ const SetDesignList = () => {
       fetchSetDesigns(); // Refresh list
       alert('ست‌بندی با موفقیت تأیید شد.');
     } catch (err) {
-      console.error('Error approving set design:', err);
+      // console.error('Error approving set design:', err);
       alert('خطا در تأیید ست‌بندی. لطفاً دوباره تلاش کنید.');
     }
   };
@@ -61,7 +61,7 @@ const SetDesignList = () => {
       fetchSetDesigns(); // Refresh list
       alert('ست‌بندی رد شد و بازخورد شما ثبت گردید.');
     } catch (err) {
-      console.error('Error rejecting set design:', err);
+      // console.error('Error rejecting set design:', err);
       alert('خطا در رد ست‌بندی. لطفاً دوباره تلاش کنید.');
     }
   };
@@ -75,7 +75,7 @@ const SetDesignList = () => {
       fetchSetDesigns(); // Refresh list
       alert('پرداخت با موفقیت انجام شد.');
     } catch (err) {
-      console.error('Error paying for set design:', err);
+      // console.error('Error paying for set design:', err);
       alert('خطا در پرداخت. لطفاً دوباره تلاش کنید.');
     }
   };

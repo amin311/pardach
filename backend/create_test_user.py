@@ -13,11 +13,7 @@ django.setup()
 from django.contrib.auth import get_user_model
 from apps.authentication.models import Role
 from apps.business.models import Business
-<<<<<<< HEAD
-from apps.designs.models import PrintLocation
-=======
 from apps.print_locations.models import PrintCenter
->>>>>>> e8320ca61aa812ab6f4e88a6fdde8759cca6f772
 
 User = get_user_model()
 

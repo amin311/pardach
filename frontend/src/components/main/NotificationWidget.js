@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBell, FaCheck, FaEye, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
 
 /**
  * کامپوننت نمایش اعلانات اخیر
@@ -155,7 +156,7 @@ const NotificationWidget = ({ notifications = [] }) => {
                                 className="text-sm text-green-600 hover:text-green-800 flex items-center gap-1"
                                 onClick={() => {
                                   // اینجا می‌توان API برای خوانده شدن اعلان را فراخوانی کرد
-                                  console.log('Mark as read:', notification.id);
+                                  toast.info(`اعلان ${notification.id} به عنوان خوانده شده علامت‌گذاری شد`);
                                 }}
                               >
                                 <FaCheck size={14} />

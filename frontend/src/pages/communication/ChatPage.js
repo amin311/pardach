@@ -55,7 +55,7 @@ const ChatPage = ({ userId }) => {
     wsRef.current = new WebSocket(`${wsScheme}://${window.location.host}/ws/chat/${id}/`);
 
     wsRef.current.onopen = () => {
-      console.log('WebSocket connection established');
+      toast.success('اتصال به چت برقرار شد');
       setConnecting(false);
     };
 
@@ -79,9 +79,8 @@ const ChatPage = ({ userId }) => {
     };
 
     wsRef.current.onclose = () => {
-      console.log('WebSocket connection closed');
+      toast.warning('اتصال به چت قطع شد. در حال تلاش برای اتصال مجدد...');
       setConnecting(false);
-      toast.warning('اتصال قطع شد. در حال تلاش برای اتصال مجدد...');
       
       // تلاش مجدد برای اتصال پس از 5 ثانیه
       setTimeout(() => {
@@ -92,9 +91,8 @@ const ChatPage = ({ userId }) => {
     };
 
     wsRef.current.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      setConnecting(false);
       toast.error('خطا در اتصال به سرور چت');
+      setConnecting(false);
     };
 
     // بستن اتصال WebSocket در زمان خروج

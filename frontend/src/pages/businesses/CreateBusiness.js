@@ -63,7 +63,6 @@ const CreateBusiness = ({ userId }) => {
       toast.success('کسب‌وکار با موفقیت ایجاد شد');
       navigate('/businesses');
     } catch (error) {
-      console.error('Error creating business:', error);
       if (error.response && error.response.data) {
         // نمایش خطاهای دریافتی از سرور
         if (typeof error.response.data === 'object') {
